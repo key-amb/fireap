@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
 $LOAD_PATH.push(File.expand_path('../../lib', __FILE__))
-require 'diffusul'
+require 'diffusul/cli'
 
-Diffusul.run(ARGV)
+Diffusul::CLI.start(ARGV)

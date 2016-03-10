@@ -1,0 +1,18 @@
+## General Settings
+
+## Common Deploy Settings
+##   - Can be overridden by each target settings
+[deploy]
+# Belows are not implemented yet:
+# command_timeout = 60
+
+## Settings for each Deploy Target
+[deploy.apps.foo]
+commands = [
+    "scp -rp <%= @remote %>:<%= ENV['HOME'] %>/<%= @key %> <%= ENV['HOME']/"
+]
+# Belows are not implemented yet:
+# user = "foo"
+# max_semaphores = 5
+# service = "foo"
+# tag = "bar"
