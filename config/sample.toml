@@ -4,6 +4,7 @@
 ## Common Deploy Settings
 ##   - Can be overridden by each target settings
 [deploy]
+max_semaphores = 5
 # Belows are not implemented yet:
 # command_timeout = 60
 

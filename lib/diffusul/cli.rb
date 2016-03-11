@@ -4,6 +4,7 @@ require 'thor'
 
 require 'diffusul/config'
 require 'diffusul/deploy'
+require 'diffusul/rest'
 require 'diffusul/watch'
 
 module Diffusul
@@ -15,16 +16,23 @@ module Diffusul
     option 'app', :required => true, :aliases => 'a'
     option 'version', :aliases => 'v'
     def deploy
-      Diffusul::Deploy.start(options)
+      Diffusul::Deploy.start(options, config: @@config.deploy)
     end
 
     desc 'watch', 'Watch Deploy Event'
     def watch
-      event = ''
+      events = ''
       while ins = $stdin.gets
-        event << ins
+        events << ins
       end
-      Diffusul::Watch.handle( JSON.parse(event) )
+      Diffusul::Watch.handle(events: JSON.parse(events), config: @@config)
+    end
+
+    desc 'clear', 'Clear deploy lock of target app'
+    option 'app', :required => true, :aliases => 'a'
+    def clear
+      Diffusul::Deploy.release_lock(options['app'])
+      puts "Successfully cleared lock for app=#{options['app']}."
     end
 
     def self.start(argv)

@@ -12,7 +12,7 @@ module Diffusul
 
     def method_missing(method)
       unless @me.has_key?(method.to_s)
-        raise "No such method: #{method}!"
+        #raise "No such method: #{method}!"
       end
       return @me[method.to_s]
     end
