@@ -24,7 +24,14 @@ module Diffusul
         return
       end
 
-      #nodes = Diplomat::Kv.get
+      nodes = Diffusul::Kv.get_recurse("#{app}/nodes/").select do |n|
+        %r|#{app}/nodes/[^/]+/version$|.match(n['key']) && n['value'] == new_ver
+      end
+      if nodes.empty?
+        raise "Can't fetch updated app from any node! app=#{app}, version=#{new_ver}"
+      end
+
+      # nodes.sample
     end
   end
 end
