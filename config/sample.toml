@@ -9,7 +9,7 @@
 ## Settings for each Deploy Target
 [deploy.apps.foo]
 commands = [
-    "scp -rp <%= @remote %>:<%= ENV['HOME'] %>/<%= @key %> <%= ENV['HOME']/"
+    "scp -rp <%= @remote %>:<%= ENV['HOME'] %>/<%= @key %> <%= ENV['HOME'] %>/"
 ]
 # Belows are not implemented yet:
 # user = "foo"
