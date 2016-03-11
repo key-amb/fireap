@@ -1,5 +1,3 @@
-require 'diplomat'
-
 module Diffusul
   module Deploy
     def self.start(options)
