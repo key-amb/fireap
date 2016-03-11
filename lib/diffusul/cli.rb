@@ -4,6 +4,7 @@ require 'thor'
 
 require 'diffusul/config'
 require 'diffusul/deploy'
+require 'diffusul/kv'
 require 'diffusul/rest'
 require 'diffusul/watch'
 
