@@ -7,6 +7,7 @@ require 'diffusul/context'
 require 'diffusul/deploy'
 require 'diffusul/kv'
 require 'diffusul/rest'
+require 'diffusul/string'
 require 'diffusul/watch'
 
 module Diffusul

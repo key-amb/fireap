@@ -23,7 +23,7 @@ module Diffusul
       version = options['version'] || get_next_version(app, node: node, ctx: ctx)
       kvs = {
         version:   version,
-        semaphore: ctx.config.deploy['max_semaphores'] || @@default_semaphore,
+        semaphore: get_max_semaphore(ctx: ctx),
       }
       kvs.each_pair do |key, val|
         k = "#{app}/nodes/#{node}/#{key}"
@@ -62,6 +62,10 @@ module Diffusul
       end
       ctx.log.debug("App=#{app} Current Ver=#{@current_version}, Next=#{version}")
       version
+    end
+
+    def self.get_max_semaphore(ctx: nil)
+      ctx.config.deploy['max_semaphores'] || @@default_semaphore
     end
   end
 end

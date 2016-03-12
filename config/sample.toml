@@ -10,16 +10,23 @@ rotate = "daily" # from Ruby Logger shift_age
 ##   - Can be overridden by each target settings
 [deploy]
 max_semaphores = 5
+watch_timeout  = 120 # seconds
 # Belows are not implemented yet:
 # command_timeout = 60
 
 ## Settings for each Deploy Target
 [deploy.apps.foo]
 commands = [
-    "scp -rp <%= @remote %>:<%= ENV['HOME'] %>/<%= @key %> <%= ENV['HOME'] %>/"
+    "scp -rp <%= @remote %>:<%= ENV['HOME'] %>/<%= @app %> <%= ENV['HOME'] %>/"
 ]
+
 # Belows are not implemented yet:
 # user = "foo"
 # max_semaphores = 5
 # service = "foo"
 # tag = "bar"
+
+[deploy.apps.diffusul]
+commands = [
+    "scp -rp <%= @remote %>:<%= ENV['HOME'] %>/<%= @app %> <%= ENV['HOME'] %>/"
+]
