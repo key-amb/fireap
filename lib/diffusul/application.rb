@@ -9,7 +9,7 @@ module Diffusul
     end
 
     def self.find_or_new(name, node)
-      version = Diffusul::Kv.get("#{name}/nodes/#{node.name}/version", :return) || 0
+      version = Diffusul::Kv.get("#{name}/nodes/#{node.name}/version", :return)
       new(name, version: version, node: node)
     end
 

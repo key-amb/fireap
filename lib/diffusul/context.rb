@@ -30,9 +30,9 @@ module Diffusul
     end
 
     def logger(config)
-      dest   = config['file'] || STDOUT
+      dest   = config['file']   || STDOUT
       rotate = config['rotate'] || 0
-      level  = config['level'] || 'INFO'
+      level  = config['level']  || 'INFO'
       @log   = Logger.new(dest, rotate)
       @log.level = Object.const_get("Logger::#{level}")
       @log

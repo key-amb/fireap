@@ -12,26 +12,22 @@ module Diffusul
     end
 
     def self.prepare(options, ctx: nil)
-      app    = options['app']
-      config = ctx.config.deploy
-      unless config['apps'][app]
-        ctx.die("Not configured app! #{app}")
+      appname = options['app']
+      config  = ctx.config.deploy
+      unless config['apps'][appname]
+        ctx.die("Not configured app! #{appname}")
       end
-      get_lock(app, ctx: ctx)
-      me   = Diffusul::Rest.get('/agent/self')
-      node = me['Member']['Name']
-      version = options['version'] || get_next_version(app, node: node, ctx: ctx)
-      kvs = {
+
+      get_lock(appname, ctx: ctx)
+      version = options['version'] \
+        || get_next_version(appname, node: ctx.mynode, ctx: ctx)
+      Diffusul::AppNode.new({
+        app:       appname,
+        node:      ctx.mynode.name,
         version:   version,
         semaphore: get_max_semaphore(ctx: ctx),
-      }
-      kvs.each_pair do |key, val|
-        k = "#{app}/nodes/#{node}/#{key}"
-        unless Diffusul::Kv.put(k, val.to_s)
-          ctx.die("Failed to put kv! key=#{k}, val=#{val}")
-        end
-      end
-      { app: app, version: version }
+      }).save(ctx)
+      { app: appname, version: version }
     end
 
     def self.get_lock(app, ctx: nil)
@@ -51,8 +47,9 @@ module Diffusul
       end
     end
 
-    def self.get_next_version(app, node: nil, ctx: nil)
-      @current_version = Diffusul::Kv.get("#{app}/nodes/#{node}/version", :return)
+    def self.get_next_version(appname, node: nil, ctx: nil)
+      app = Diffusul::Application.find_or_new(appname, node)
+      @current_version = app.version
       return 1 unless @current_version.length > 0
       version = nil
       if %r{(.*\D)?(\d+)(\D*)?}.match(@current_version.to_s)
