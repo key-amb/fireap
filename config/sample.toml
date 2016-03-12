@@ -1,6 +1,11 @@
 ## General Settings
 # url = "http://localhost:8500"
 
+[log]
+level  = "INFO"  # from Ruby Logger::LEVEL
+rotate = "daily" # from Ruby Logger shift_age
+# file = path/to/logfile
+
 ## Common Deploy Settings
 ##   - Can be overridden by each target settings
 [deploy]

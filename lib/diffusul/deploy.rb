@@ -4,57 +4,64 @@ module Diffusul
   class Deploy
     @@default_semaphore = 2
 
-    def self.start(options, config: nil)
-      payload = prepare(options, config: config)
+    def self.start(options, ctx: nil)
+      payload = prepare(options, ctx: ctx)
       args = [ 'diffusul:deploy', payload.to_json ]
       Diplomat::Event.fire(*args)
       release_lock(options['app'])
     end
 
-    def self.prepare(options, config: nil)
-      app = options['app']
-      get_lock(app)
+    def self.prepare(options, ctx: nil)
+      app    = options['app']
+      config = ctx.config.deploy
+      unless config['apps'][app]
+        ctx.die("Not configured app! #{app}")
+      end
+      get_lock(app, ctx: ctx)
       me   = Diffusul::Rest.get('/agent/self')
       node = me['Member']['Name']
-      version = options['version'] || get_next_version(app, node: node)
+      version = options['version'] || get_next_version(app, node: node, ctx: ctx)
       kvs = {
         version:   version,
-        semaphore: config['max_semaphores'] || @@default_semaphore,
+        semaphore: ctx.config.deploy['max_semaphores'] || @@default_semaphore,
       }
       kvs.each_pair do |key, val|
         k = "#{app}/nodes/#{node}/#{key}"
         unless Diffusul::Kv.put(k, val.to_s)
-          raise "Failed to put kv! key=#{k}, val=#{val}"
+          ctx.die("Failed to put kv! key=#{k}, val=#{val}")
         end
       end
       { app: app, version: version }
     end
 
-    def self.get_lock(app)
+    def self.get_lock(app, ctx: nil)
       @lock_key ||= "#{app}/lock"
       if Diffusul::Kv.get(@lock_key, :return).length > 0
-        raise "#{app} is already locked! Probably deploy is ongoing."
+        ctx.die("#{app} is already locked! Probably deploy is ongoing.")
       end
       unless Diffusul::Kv.put(@lock_key, Socket.gethostname)
-        raise "Failed to put kv! key=#{app}"
+        ctx.die("Failed to put kv! key=#{app}")
       end
     end
 
-    def self.release_lock(app)
+    def self.release_lock(app, ctx: nil)
       @lock_key ||= "#{app}/lock"
       unless Diffusul::Kv.delete(@lock_key)
-        raise "Failed to delete kv! key=#{app}"
+        ctx.die("Failed to delete kv! key=#{app}")
       end
     end
 
-    def self.get_next_version(app, node: nil)
+    def self.get_next_version(app, node: nil, ctx: nil)
       @current_version = Diffusul::Kv.get("#{app}/nodes/#{node}/version", :return)
       return 1 unless @current_version.length > 0
+      version = nil
       if %r{(.*\D)?(\d+)(\D*)?}.match(@current_version.to_s)
-        return [$1, $2.to_i + 1, $3].join
+        version = [$1, $2.to_i + 1, $3].join
       else
-        return @current_version + '-1'
+        version = @current_version + '-1'
       end
+      ctx.log.debug("App=#{app} Current Ver=#{@current_version}, Next=#{version}")
+      version
     end
   end
 end
