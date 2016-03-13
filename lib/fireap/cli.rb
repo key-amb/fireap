@@ -12,17 +12,17 @@ module Fireap
     class_option 'config',  :aliases => 'c'
     class_option 'debug',   :aliases => 'd'
 
-    desc 'deploy', 'Deploy target app'
+    desc 'fire', 'Fire deploy event for target Application'
     option 'app', :required => true, :aliases => 'a'
     option 'version', :aliases => 'v'
-    def deploy
+    def fire
       load_context(options)
       Fireap::Deployer.new(options, ctx: @ctx).start(options)
     end
 
-    desc 'watch', 'Watch Deploy Event'
+    desc 'reap', 'Watch and Reap a deploy event'
     option 'dry-run', :aliases => 'n'
-    def watch
+    def reap
       load_context(options)
       Fireap::Watcher.new(options, ctx: @ctx).wait_and_handle
     end
