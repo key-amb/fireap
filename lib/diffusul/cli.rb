@@ -16,7 +16,7 @@ module Diffusul
     option 'version', :aliases => 'v'
     def deploy
       load_ctx(options['config'])
-      Diffusul::Deploy.start(options, ctx: @ctx)
+      Diffusul::Deploy.new(options, ctx: @ctx).start(options)
     end
 
     desc 'watch', 'Watch Deploy Event'
@@ -33,7 +33,7 @@ module Diffusul
     option 'app', :required => true, :aliases => 'a'
     def clear
       load_ctx(options['config'])
-      Diffusul::Deploy.release_lock(options['app'])
+      Diffusul::Deploy.new(options, ctx: @ctx).release_lock
       puts "Successfully cleared lock for app=#{options['app']}."
     end
 

@@ -2,6 +2,7 @@ require 'base64'
 require 'timeout'
 
 require 'diffusul/application'
+require 'diffusul/deploy'
 require 'diffusul/eventdata'
 require 'diffusul/node'
 require 'diffusul/nodetable'
@@ -79,7 +80,8 @@ module Diffusul
       new_version = node.apps[app.name].version
 
       # Update succeeded. So set node's version and semaphore
-      app.semaphore.update( Diffusul::Deploy.get_max_semaphore(ctx: ctx) )
+      deploy = Diffusul::Deploy.new({ 'app' => app.name, ctx: ctx })
+      app.semaphore.update(deploy.max_semaphore)
       app.version.update(new_version)
       ctx.log.info "[#{ctx.mynode.name}] Updated app #{app.name} to version #{new_version} ."
     end
