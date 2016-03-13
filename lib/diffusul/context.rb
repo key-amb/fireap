@@ -16,7 +16,7 @@ module Diffusul
 
     def die(message, level=Logger::ERROR, err=Diffusul::Error)
       @log.log(level, [message, 'at', caller(1).to_s].join(%q{ }))
-      raise err, message
+      raise err, message unless self.develop_mode?
     end
 
     def mynode
@@ -26,10 +26,12 @@ module Diffusul
     def develop_mode?
       if    @mode == 'develop' \
         and flg = @config.enable_debugging \
-        and flg.to_i > 0
+        and flg != 0 and flg.length > 0
+        @log.warn '[DEVELOPMENT] Called from ' + caller(1..2).to_s
         true
+      else
+        false
       end
-      false
     end
 
     private

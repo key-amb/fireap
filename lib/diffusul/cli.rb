@@ -44,6 +44,14 @@ module Diffusul
         }
         Diffusul::Context.new(opt)
       }.call
+      if @ctx.develop_mode?
+        @ctx.log.warn '#####'
+        @ctx.log.warn '##### !!! Be Carefull                 !!! #####'
+        @ctx.log.warn '##### !!! Running in DEVELOPMENT Mode !!! #####'
+        @ctx.log.warn '#####'
+      elsif options['debug']
+        @ctx.log.warn %q[You specified DEBUG option. But DEBUG mode is disabled by configuration. Please set `enable_debugging = "ON"` in your config file.]
+      end
     end
   end
 end

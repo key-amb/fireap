@@ -18,9 +18,7 @@ module Diffusul
       unless resp = Diffusul::Rest.get(path)
         return false
       end
-      resp.first do |kv|
-        Raw.new(kv).to_data
-      end
+      Raw.new(resp.shift).to_data
     end
 
     # Diplomat::Kv#get with option (:recurse => 1) doesn't work.

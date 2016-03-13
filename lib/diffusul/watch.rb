@@ -68,7 +68,7 @@ module Diffusul
 
       if @myapp.version.value == @event['version']
         @ctx.log.info "App #{@event['app']} already updated. version=#{@event['version']} Nothing to do."
-        return
+        return unless @ctx.develop_mode?
       end
 
       return true
@@ -90,7 +90,7 @@ module Diffusul
 
         candidates.each_pair do |host, node|
           nodeapp = node.apps[appname]
-          unless nodeapp.semaphore.consume
+          unless nodeapp.semaphore.consume(cas: true)
             ctx.log.debug "Can't get semaphore from #{host}; app=#{appname}"
             next
           end
@@ -113,7 +113,7 @@ module Diffusul
     def pull_update(node, ctx: nil)
       appname = @myapp.name
       ctx.log.debug "Will update #{appname} from #{node.name}."
-      new_version = node.apps[appname].version
+      new_version = @event['version']
 
       # Update succeeded. So set node's version and semaphore
       @myapp.semaphore.update(deploy.max_semaphore)
@@ -124,6 +124,7 @@ module Diffusul
     def restore_semaphore(semaphore)
       (1..@@restore_retry).each do |i|
         semaphore = semaphore.refetch
+        ctx.log.debug "Restore semaphore (#{i}). key=#{semaphore.key}, current=#{semaphore.value}"
         return true if semaphore.restore
         sleep @@restore_interval
       end

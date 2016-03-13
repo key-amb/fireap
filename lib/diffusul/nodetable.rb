@@ -19,6 +19,7 @@ module Diffusul
         ctx.log.debug 'Got kv. %s:%s => %s'%[nodename, propkey, data.value]
         if mynode and mynode.name == nodename
           ctx.log.info "Event transmitter is myself. #{nodename} Skip."
+          next unless ctx.develop_mode?
         end
 
         node = @nodes[nodename]    ||= Diffusul::Node.new(nodename)
@@ -34,7 +35,8 @@ module Diffusul
         version   = napp.version.value
         semaphore = napp.semaphore.value
         ctx.log.debug "Node #{name} - Version = #{version}, Semaphore=#{semaphore}"
-        napp.version == version && semaphore > 0
+        (napp.version == version && semaphore > 0) \
+          or ctx.develop_mode?
       end
     end
   end
