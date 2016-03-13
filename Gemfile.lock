@@ -2,6 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     citrus (3.0.2)
+    diff-lcs (1.2.5)
     diplomat (0.15.0)
       faraday (~> 0.9)
       json (~> 1.8)
@@ -9,6 +10,20 @@ GEM
       multipart-post (>= 1.2, < 3)
     json (1.8.3)
     multipart-post (2.0.0)
+    rake (10.4.2)
+    rspec (3.4.0)
+      rspec-core (~> 3.4.0)
+      rspec-expectations (~> 3.4.0)
+      rspec-mocks (~> 3.4.0)
+    rspec-core (3.4.4)
+      rspec-support (~> 3.4.0)
+    rspec-expectations (3.4.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.4.0)
+    rspec-mocks (3.4.1)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.4.0)
+    rspec-support (3.4.1)
     thor (0.19.1)
     toml-rb (0.3.12)
       citrus (~> 3.0, > 3.0)
@@ -18,5 +33,7 @@ PLATFORMS
 
 DEPENDENCIES
   diplomat (~> 0.15.0)
+  rake (~> 10.4)
+  rspec (~> 3.4)
   thor (~> 0.19)
   toml-rb (~> 0.3.10)
