@@ -1,7 +1,7 @@
 require 'erb'
 require 'open3'
 
-module Diffusul
+module Fireap
   class Command
     attr :format, :app, :remote, :config, :ctx
 

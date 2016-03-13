@@ -1,7 +1,7 @@
-require 'diffusul/kv/data'
+require 'fireap/kv/data'
 
-module Diffusul
-  class Version < Diffusul::Kv::Data
+module Fireap
+  class Version < Fireap::Kv::Data
     def initialize(params)
       super(params)
       @value ||= '0'

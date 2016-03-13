@@ -1,4 +1,4 @@
-module Diffusul
+module Fireap
   class Log
     attr :ctx
 

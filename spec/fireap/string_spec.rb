@@ -1,4 +1,4 @@
-require 'diffusul/string'
+require 'fireap/string'
 
 describe 'to_snake - string converter' do
   {

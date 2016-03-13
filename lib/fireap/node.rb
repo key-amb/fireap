@@ -1,8 +1,8 @@
-require 'diffusul/application'
-require 'diffusul/nodetable'
-require 'diffusul/rest'
+require 'fireap/application'
+require 'fireap/nodetable'
+require 'fireap/rest'
 
-module Diffusul
+module Fireap
   class Node
     attr :name, :address, :apps
 
@@ -13,7 +13,7 @@ module Diffusul
     end
 
     def self.query_agent_self
-      resp = Diffusul::Rest.get('/agent/self')
+      resp = Fireap::Rest.get('/agent/self')
       new(resp['Member']['Name'], resp['Member']['Address'])
     end
   end
