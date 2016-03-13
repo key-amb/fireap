@@ -1,5 +1,7 @@
 require 'socket'
 
+require 'diffusul/application'
+
 module Diffusul
   class Deploy
     @@default_semaphore = 2
@@ -9,6 +11,7 @@ module Diffusul
       args = [ 'diffusul:deploy', payload.to_json ]
       Diplomat::Event.fire(*args)
       release_lock(options['app'])
+      ctx.log.info "Deploy event fired. data = #{payload.to_s}"
     end
 
     def self.prepare(options, ctx: nil)
@@ -19,7 +22,7 @@ module Diffusul
       end
 
       get_lock(appname, ctx: ctx)
-      app = Diffusul::Application.find_or_new(appname, node)
+      app = Diffusul::Application.find_or_new(appname, ctx.mynode)
 
       version = options['version'] || app.version.next_version
       app.semaphore.update( get_max_semaphore(ctx: ctx) )

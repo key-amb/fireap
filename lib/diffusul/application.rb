@@ -5,15 +5,27 @@ module Diffusul
   class Application
     attr :name, :version, :semaphore, :node
 
-    def initialize(name, version: nil, node: nil)
-      @name    = name
-      @version = version
-      @node    = node
+    def initialize(name, version: nil, semaphore: nil, node: nil)
+      @name      = name
+      @version   = version
+      @semaphore = semaphore
+      @node      = node
     end
 
     def self.find_or_new(name, node)
-      version = Diffusul::Version.get("#{name}/nodes/#{node.name}/version")
-      new(name, version: version, node: node)
+      app  = new(name, node: node)
+      path = "#{name}/nodes/#{node.name}"
+      kv_data = Diffusul::Kv.get_recurse(path)
+      if kv_data.length > 0
+        kv_data.each { |kv| app.set_kv_prop(File.basename(kv.key), kv) }
+      else
+        %w[version semaphore].each do |key|
+          app.set_kv_prop(key, Diffusul::Kv::Data.new({
+            key: [path, key].join('/'),
+          }))
+        end
+      end
+      app
     end
 
     def set_kv_prop(key, kv_data)

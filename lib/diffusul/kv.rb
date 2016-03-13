@@ -15,10 +15,7 @@ module Diffusul
     def get_data(key, with_prefix: nil)
       path = with_prefix ? '/kv/' + key
            :               "/kv/#{PREFIX}" + key
-      begin
-        resp = Diffusul::Rest.get(path)
-      rescue => e
-        Diffusul::Context.get.log.info "Kv data not found. key=#{key}"
+      unless resp = Diffusul::Rest.get(path)
         return false
       end
       resp.first do |kv|
@@ -29,11 +26,10 @@ module Diffusul
     # Diplomat::Kv#get with option (:recurse => 1) doesn't work.
     # This is a work around.
     def get_recurse(key)
-      list = []
-      Diffusul::Rest.get("/kv/#{PREFIX}" + key, params: ['recurse=1']).each do |kv|
-        list.push( Raw.new(kv).to_data )
+      unless resp = Diffusul::Rest.get("/kv/#{PREFIX}" + key, params: ['recurse=1'])
+        return []
       end
-      list
+      resp.map { |kv| Raw.new(kv).to_data }
     end
 
     def put(key, value, options=nil)

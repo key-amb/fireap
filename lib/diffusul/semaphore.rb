@@ -6,11 +6,11 @@ module Diffusul
       if @value <= 0
         raise "No more semaphore! val=#{@value}"
       end
-      self.update(@value - 1, cas: cas)
+      self.update(@value.to_i - 1, cas: cas)
     end
 
     def restore(cas: false)
-      self.update(@value + 1, cas: cas)
+      self.update(@value.to_i + 1, cas: cas)
     end
   end
 end

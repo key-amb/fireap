@@ -3,9 +3,16 @@ module Diffusul
     @access_methods = [:get]
 
     def get(path, params: [])
-      @raw = @conn.get do |req|
-        req.url concat_url [ '/v1' + path, params ]
-        req.options.timeout = 10
+      begin
+        @raw = @conn.get do |req|
+          req.url concat_url [ '/v1' + path, params ]
+          req.options.timeout = 10
+        end
+      rescue => e
+        logger = Diffusul::Context.get.log
+        logger.info "REST failed. Data not found. path=#{path}"
+        logger.debug e
+        return nil
       end
       parse_body
     end

@@ -27,8 +27,8 @@ module Diffusul
 
       app = Diffusul::Application.find_or_new(data['app'], ctx.mynode)
 
-      if app.version == data['version']
-        ctx.log.info "App #{app.name} already updated. version=#{app['version']} Nothing to do."
+      if app.version.value == data['version']
+        ctx.log.info "App #{app.name} already updated. version=#{data['version']} Nothing to do."
         return
       end
 

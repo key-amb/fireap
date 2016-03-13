@@ -43,7 +43,7 @@ module Diffusul
       def update(value, cas: false)
         before = @value
         updated = proc {
-          @value = value
+          @value = value.to_s
           save(cas: cas)
         }.call
         if updated
