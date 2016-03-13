@@ -2,13 +2,13 @@ require 'base64'
 require 'timeout'
 
 require 'diffusul/application'
-require 'diffusul/deploy'
+require 'diffusul/deployer'
 require 'diffusul/eventdata'
 require 'diffusul/node'
 require 'diffusul/nodetable'
 
 module Diffusul
-  class Watch
+  class Watcher
     @@default_timeout  = 600 # seconds
     @@loop_interval    = 5
     @@restore_interval = 3
@@ -60,7 +60,7 @@ module Diffusul
         @ctx.die("Not configured app! #{@event['app']}")
       end
 
-      @deploy = Diffusul::Deploy.new({
+      @deploy = Diffusul::Deployer.new({
         'app' => @event['app'],
       }, ctx: @ctx )
 

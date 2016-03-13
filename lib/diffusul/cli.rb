@@ -2,8 +2,8 @@ require 'thor'
 
 require 'diffusul/config'
 require 'diffusul/context'
-require 'diffusul/deploy'
-require 'diffusul/watch'
+require 'diffusul/deployer'
+require 'diffusul/watcher'
 
 module Diffusul
   class CLI < Thor
@@ -17,20 +17,20 @@ module Diffusul
     option 'version', :aliases => 'v'
     def deploy
       load_context(options)
-      Diffusul::Deploy.new(options, ctx: @ctx).start(options)
+      Diffusul::Deployer.new(options, ctx: @ctx).start(options)
     end
 
     desc 'watch', 'Watch Deploy Event'
     def watch
       load_context(options)
-      Diffusul::Watch.new(options, ctx: @ctx).wait_and_handle
+      Diffusul::Watcher.new(options, ctx: @ctx).wait_and_handle
     end
 
     desc 'clear', 'Clear deploy lock of target app'
     option 'app', :required => true, :aliases => 'a'
     def clear
       load_context(options)
-      Diffusul::Deploy.new(options, ctx: @ctx).release_lock
+      Diffusul::Deployer.new(options, ctx: @ctx).release_lock
       puts "Successfully cleared lock for app=#{options['app']}."
     end
 

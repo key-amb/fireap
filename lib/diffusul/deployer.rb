@@ -4,7 +4,7 @@ require 'diffusul/application'
 require 'diffusul/kv'
 
 module Diffusul
-  class Deploy
+  class Deployer
     @@default_semaphore = 2
     attr :ctx, :config, :app, :max_semaphore
 
