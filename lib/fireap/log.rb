@@ -10,14 +10,16 @@ module Diffusul
 
     def method_missing(method, *args)
       lg_args = args
-      msg = lg_args.shift
-      if @dry_run
-        msg = "[Dry-run] #{msg}"
+      if %w[ debug info warn error fatal ].include?(method)
+        msg = lg_args[0]
+        if @dry_run
+          msg = "[Dry-run] #{msg}"
+        end
+        if @develop_mode
+          msg = "## DEVELOP MODE ## #{msg}"
+        end
       end
-      if @develop_mode
-        msg = "## DEVELOP MODE ## #{msg}"
-      end
-      @log.send(method, msg, *lg_args)
+      @log.send(method, *lg_args)
     end
   end
 end
