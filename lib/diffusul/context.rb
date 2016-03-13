@@ -20,7 +20,7 @@ module Diffusul
     end
 
     def mynode
-      @node ||= Diffusul::Node.new
+      @node ||= Diffusul::Node.query_agent_self
     end
 
     def develop_mode?

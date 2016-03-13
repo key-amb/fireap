@@ -1,14 +1,22 @@
+require 'diplomat'
+require 'singleton'
+
+require 'diffusul/node'
+
 module Diffusul
   class NodeTable
-    @nodes = nil
+    include Singleton
+    attr :nodes
 
     def initialize
-      @nodes = {
-        # Diffusul::Node#name => Diffusul::Node
-      }
+      @nodes ||= {}
+      Diplomat::Node.get_all.each do |nod|
+        dnode  = Diffusul::Node.new(nod['Node'], nod['Address'])
+        @nodes[dnode.name] = dnode
+      end
     end
 
-    def set_by_app(app, ctx: nil)
+    def collect_app_info(app, ctx: nil)
       mynode = ctx.mynode if ctx
       Diffusul::Kv.get_recurse("#{app.name}/nodes/").each do |data|
         unless %r|#{app.name}/nodes/([^/]+)/([^/\s]+)$|.match(data.key)
@@ -22,7 +30,7 @@ module Diffusul
           next unless ctx.develop_mode?
         end
 
-        node = @nodes[nodename]    ||= Diffusul::Node.new(nodename)
+        node = @nodes[nodename] or ctx.die("Unknown Node! #{nodename}")
         app  = node.apps[app.name] ||= Diffusul::Application.new(app.name, node: node)
         app.set_kv_prop(propkey, data)
       end

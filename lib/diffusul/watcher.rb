@@ -80,10 +80,10 @@ module Diffusul
 
       updated = false
       while !updated
-        nodes = Diffusul::NodeTable.new
-        nodes.set_by_app(@myapp, ctx: ctx)
+        ntable = Diffusul::NodeTable.instance
+        ntable.collect_app_info(@myapp, ctx: ctx)
 
-        candidates = nodes.select_updated(@myapp, version, ctx: ctx)
+        candidates = ntable.select_updated(@myapp, version, ctx: ctx)
         if candidates.empty?
           ctx.die("Can't fetch updated app from any node! app=#{appname}, version=#{version}")
         end
@@ -96,7 +96,7 @@ module Diffusul
           end
 
           begin
-            pull_update(node, ctx: ctx)
+            pull_update(node)
             updated = true
             break
           ensure
@@ -110,21 +110,21 @@ module Diffusul
       end
     end
 
-    def pull_update(node, ctx: nil)
+    def pull_update(node)
       appname = @myapp.name
-      ctx.log.debug "Will update #{appname} from #{node.name}."
+      @ctx.log.debug "Will update #{appname} from #{node.name}."
       new_version = @event['version']
 
       # Update succeeded. So set node's version and semaphore
       @myapp.semaphore.update(deploy.max_semaphore)
       @myapp.version.update(new_version)
-      ctx.log.info "[#{ctx.mynode.name}] Updated app #{appname} to version #{new_version} ."
+      @ctx.log.info "[#{@ctx.mynode.name}] Updated app #{appname} to version #{new_version} ."
     end
 
     def restore_semaphore(semaphore)
       (1..@@restore_retry).each do |i|
         semaphore = semaphore.refetch
-        ctx.log.debug "Restore semaphore (#{i}). key=#{semaphore.key}, current=#{semaphore.value}"
+        @ctx.log.debug "Restore semaphore (#{i}). key=#{semaphore.key}, current=#{semaphore.value}"
         return true if semaphore.restore
         sleep @@restore_interval
       end

@@ -1,16 +1,20 @@
 require 'diffusul/application'
+require 'diffusul/nodetable'
 require 'diffusul/rest'
 
 module Diffusul
   class Node
-    attr :name, :apps
+    attr :name, :address, :apps
 
-    def initialize(name=nil)
-      @name = name || proc {
-        resp = Diffusul::Rest.get('/agent/self')
-        resp['Member']['Name']
-      }.call
-      @apps = {}
+    def initialize(name, address)
+      @name    = name
+      @address = address
+      @apps    = {}
+    end
+
+    def self.query_agent_self
+      resp = Diffusul::Rest.get('/agent/self')
+      new(resp['Member']['Name'], resp['Member']['Address'])
     end
   end
 end
