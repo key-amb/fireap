@@ -9,8 +9,8 @@ module Diffusul
   class CLI < Thor
     @ctx
     package_name "Diffusul::CLI"
-    class_option 'config', :aliases => 'c'
-    class_option 'debug',  :aliases => 'd'
+    class_option 'config',  :aliases => 'c'
+    class_option 'debug',   :aliases => 'd'
 
     desc 'deploy', 'Deploy target app'
     option 'app', :required => true, :aliases => 'a'
@@ -21,6 +21,7 @@ module Diffusul
     end
 
     desc 'watch', 'Watch Deploy Event'
+    option 'dry-run', :aliases => 'n'
     def watch
       load_context(options)
       Diffusul::Watcher.new(options, ctx: @ctx).wait_and_handle
@@ -40,16 +41,12 @@ module Diffusul
       @ctx ||= proc {
         opt = {
           config_path:  options['config'],
+          dry_run:      options['dry-run'],
           develop_mode: options['debug'],
         }
         Diffusul::Context.new(opt)
       }.call
-      if @ctx.develop_mode?
-        @ctx.log.warn '#####'
-        @ctx.log.warn '##### !!! Be Carefull                 !!! #####'
-        @ctx.log.warn '##### !!! Running in DEVELOPMENT Mode !!! #####'
-        @ctx.log.warn '#####'
-      elsif options['debug']
+      if ! @ctx.develop_mode? and options['debug']
         @ctx.log.warn %q[You specified DEBUG option. But DEBUG mode is disabled by configuration. Please set `enable_debugging = "ON"` in your config file.]
       end
     end

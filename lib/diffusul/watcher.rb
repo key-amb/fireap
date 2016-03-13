@@ -129,7 +129,7 @@ module Diffusul
             "[#{appname}] Some commands failed. cnt=#{failed.length}, ignored=#{ignored.length}. CONTINUE ..."
         end
       else
-        @ctx.info "[#{appname}] All commands Succeeded."
+        @ctx.log.info "[#{appname}] All commands Succeeded."
       end
 
       # Update succeeded. So set node's version and semaphore
