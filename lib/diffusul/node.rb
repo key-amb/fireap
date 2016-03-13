@@ -1,3 +1,6 @@
+require 'diffusul/application'
+require 'diffusul/rest'
+
 module Diffusul
   class Node
     attr :name, :apps
@@ -8,10 +11,6 @@ module Diffusul
         resp['Member']['Name']
       }.call
       @apps = {}
-    end
-
-    def get_or_newapp(name)
-      self.apps[name] ||= Diffusul::Application.find_or_new(name, self)
     end
   end
 end

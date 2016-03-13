@@ -1,18 +1,8 @@
-require 'diplomat'
-require 'json'
 require 'thor'
 
-require 'diffusul/application'
-require 'diffusul/appnode'
 require 'diffusul/config'
 require 'diffusul/context'
 require 'diffusul/deploy'
-require 'diffusul/kv'
-require 'diffusul/node'
-require 'diffusul/nodetable'
-require 'diffusul/rest'
-require 'diffusul/semaphore'
-require 'diffusul/string'
 require 'diffusul/watch'
 
 module Diffusul
@@ -36,7 +26,7 @@ module Diffusul
       while ins = $stdin.gets
         events << ins
       end
-      Diffusul::Watch.handle(events: JSON.parse(events), ctx: @ctx)
+      Diffusul::Watch.handle(events: events, ctx: @ctx)
     end
 
     desc 'clear', 'Clear deploy lock of target app'

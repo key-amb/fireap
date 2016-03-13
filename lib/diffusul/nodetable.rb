@@ -28,11 +28,13 @@ module Diffusul
       ctx.log.debug @nodes.to_s
     end
 
-    def select_updated(app, ctx: nil)
+    def select_updated(app, version, ctx: nil)
       @nodes.select do |name, node|
         napp = node.apps[app.name] or ctx.die("Can't find app #{app.name} from node #{name}!")
-        ctx.log.debug "Node #{name} - Version = #{napp.version}, Semaphore=#{napp.semaphore.value}"
-        napp.version == app.version && napp.semaphore.value > 0
+        version   = napp.version.value
+        semaphore = napp.semaphore.value
+        ctx.log.debug "Node #{name} - Version = #{version}, Semaphore=#{semaphore}"
+        napp.version == version && semaphore > 0
       end
     end
   end

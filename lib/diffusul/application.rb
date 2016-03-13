@@ -1,3 +1,6 @@
+require 'diffusul/semaphore'
+require 'diffusul/version'
+
 module Diffusul
   class Application
     attr :name, :version, :semaphore, :node
@@ -9,16 +12,19 @@ module Diffusul
     end
 
     def self.find_or_new(name, node)
-      version = Diffusul::Kv.get("#{name}/nodes/#{node.name}/version", :return)
+      version = Diffusul::Version.get("#{name}/nodes/#{node.name}/version")
       new(name, version: version, node: node)
     end
 
     def set_kv_prop(key, kv_data)
-      @version = kv_data.value if (key == 'version')
-      if (key == 'semaphore')
-        @semaphore = Diffusul::Semaphore.new(kv_data)
+      case key
+      when 'version'
+        @version = Diffusul::Version.new(kv_data.to_hash)
+      when 'semaphore'
+        @semaphore = Diffusul::Semaphore.new(kv_data.to_hash)
+      else
+        raise "Unkwon kv_prop! key=#{key}, data=#{kv_data.to_s}"
       end
     end
   end
 end
-

@@ -1,17 +1,28 @@
+require 'diffusul/kv/data'
+require 'diffusul/kv/raw'
+
 module Diffusul
   class Kv < Diplomat::Kv
-    @@prefix = 'diffusul/'
+    PREFIX = 'diffusul/'
     @access_methods = [ :get, :put, :delete, :get_data, :get_recurse ]
 
     def get(key, not_found=:reject, options=nil, found=:return)
       # Notice: change args order to be less coding
-      super(@@prefix + key, options, not_found, found)
+      super(PREFIX + key, options, not_found, found)
     end
 
     # Diplomat::Kv#get returns only string
-    def get_data(key)
-      Diffusul::Rest.get("/kv/#{@@prefix}" + key).first do |kv|
-        Data.spawn(kv)
+    def get_data(key, with_prefix: nil)
+      path = with_prefix ? '/kv/' + key
+           :               "/kv/#{PREFIX}" + key
+      begin
+        resp = Diffusul::Rest.get(path)
+      rescue => e
+        Diffusul::Context.get.log.info "Kv data not found. key=#{key}"
+        return false
+      end
+      resp.first do |kv|
+        Raw.new(kv).to_data
       end
     end
 
@@ -19,40 +30,19 @@ module Diffusul
     # This is a work around.
     def get_recurse(key)
       list = []
-      Diffusul::Rest.get("/kv/#{@@prefix}" + key, params: ['recurse=1']).each do |kv|
-        list.push( Data.spawn(kv) )
+      Diffusul::Rest.get("/kv/#{PREFIX}" + key, params: ['recurse=1']).each do |kv|
+        list.push( Raw.new(kv).to_data )
       end
       list
     end
 
     def put(key, value, options=nil)
-      super(@@prefix + key, value, options)
+      super(PREFIX + key, value, options)
     end
 
     def delete(key, options=nil)
-      super(@@prefix + key, options)
+      super(PREFIX + key, options)
     end
 
-    class Data
-      attr :key, :value, :create_index, :modify_index, :lock_index, :flags, :session
-
-      def initialize(params)
-        params.each do |key, val|
-          instance_variable_set("@#{key}", val)
-        end
-      end
-
-      def self.spawn(raw)
-        params = {}
-        raw.each do |key, val|
-          if key == 'Value'
-            params[key.to_snake] = Base64.decode64(val)
-          else
-            params[key.to_snake] = val
-          end
-        end
-        new(params)
-      end
-    end
   end
 end

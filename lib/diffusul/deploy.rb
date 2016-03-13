@@ -19,14 +19,11 @@ module Diffusul
       end
 
       get_lock(appname, ctx: ctx)
-      version = options['version'] \
-        || get_next_version(appname, node: ctx.mynode, ctx: ctx)
-      Diffusul::AppNode.new({
-        app:       appname,
-        node:      ctx.mynode.name,
-        version:   version,
-        semaphore: get_max_semaphore(ctx: ctx),
-      }).save(ctx)
+      app = Diffusul::Application.find_or_new(appname, node)
+
+      version = options['version'] || app.version.next_version
+      app.semaphore.update( get_max_semaphore(ctx: ctx) )
+      app.version.update(version)
       { app: appname, version: version }
     end
 
@@ -45,20 +42,6 @@ module Diffusul
       unless Diffusul::Kv.delete(@lock_key)
         ctx.die("Failed to delete kv! key=#{app}")
       end
-    end
-
-    def self.get_next_version(appname, node: nil, ctx: nil)
-      app = Diffusul::Application.find_or_new(appname, node)
-      @current_version = app.version
-      return 1 unless @current_version.length > 0
-      version = nil
-      if %r{(.*\D)?(\d+)(\D*)?}.match(@current_version.to_s)
-        version = [$1, $2.to_i + 1, $3].join
-      else
-        version = @current_version + '-1'
-      end
-      ctx.log.debug("App=#{app} Current Ver=#{@current_version}, Next=#{version}")
-      version
     end
 
     def self.get_max_semaphore(ctx: nil)
