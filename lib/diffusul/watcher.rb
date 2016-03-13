@@ -4,6 +4,7 @@ require 'timeout'
 require 'diffusul/application'
 require 'diffusul/deployer'
 require 'diffusul/eventdata'
+require 'diffusul/executor'
 require 'diffusul/node'
 require 'diffusul/nodetable'
 
@@ -112,8 +113,24 @@ module Diffusul
 
     def pull_update(node)
       appname = @myapp.name
-      @ctx.log.debug "Will update #{appname} from #{node.name}."
       new_version = @event['version']
+
+      @ctx.log.debug "Start pulling update #{appname} from #{node.name} toward #{new_version}."
+      executor = Diffusul::Executor.new(ctx: @ctx)
+      @results = executor.run_commands(app: @myapp, remote: node)
+
+      failed  = @results.select { |r| r.is_failed?  }
+      ignored = failed.select   { |r| r.is_ignored? }
+      if failed.length > 0
+        if failed.length > ignored.length
+          @ctx.die "[#{appname}] Update FAILED! cnt=#{failed.length}, ignored=#{ignored.length}. ABORT!"
+        else
+          @ctx.log.warn \
+            "[#{appname}] Some commands failed. cnt=#{failed.length}, ignored=#{ignored.length}. CONTINUE ..."
+        end
+      else
+        @ctx.info "[#{appname}] All commands Succeeded."
+      end
 
       # Update succeeded. So set node's version and semaphore
       @myapp.semaphore.update(deploy.max_semaphore)

@@ -1,6 +1,6 @@
 ## General Settings
 # url = "http://localhost:8500"
-# enable_debugging = "true"
+# enable_debugging = "true" # For development Only
 
 [log]
 level  = "INFO"  # from Ruby Logger::LEVEL
@@ -12,22 +12,41 @@ rotate = "daily" # from Ruby Logger shift_age
 [deploy]
 max_semaphores = 5
 watch_timeout  = 120 # seconds
+on_command_failure = "abort" # or "ignore". Default is "abort"
+
+# You can define common deploy commands for all apps here.
+# Available variables for command formats:
+#   - @app            ... Target App's Name
+#   - @remote.name    ... Node Name in Consul Cluster
+#   - @remote.address ... Node's Ipaddress in Consul Cluster
+#   - ENV             ... Given Environment Vars for Watch Command
+before_commands = [
+    "echo Deploy <%= @app %> Started.",
+]
+# exec_commands = [] # Probably different for each apps.
+after_commands = [
+    "echo Deploy <%= @app %> Ended.",
+]
+
 # Belows are not implemented yet:
 # command_timeout = 60
 
 ## Settings for each Deploy Target
 [deploy.apps.foo]
+# max_semaphores  = 3
+# before_commands = []
 commands = [
-    "scp -rp <%= @remote %>:<%= ENV['HOME'] %>/<%= @app %> <%= ENV['HOME'] %>/"
+    #"scp -rp <%= @remote.name %>:<%= ENV['HOME'] %>/<%= @app %> <%= ENV['HOME'] %>/"
+    "scp -rp <%= @remote.address %>:<%= ENV['HOME'] %>/<%= @app %> <%= ENV['HOME'] %>/"
 ]
 
 # Belows are not implemented yet:
-# user = "foo"
-# max_semaphores = 5
 # service = "foo"
 # tag = "bar"
 
-[deploy.apps.diffusul]
-commands = [
-    "scp -rp <%= @remote %>:<%= ENV['HOME'] %>/<%= @app %> <%= ENV['HOME'] %>/"
+[deploy.apps.bar]
+on_command_failure = "ignore"
+exec_commands = [
+    "date '+%FT%T' > /tmp/bar.updated_at.txt",
+    "rsync -az --delete --exclude='.git*' <%= @remote.address %>:<%= ENV['HOME'] %>/<%= @app %> <%= ENV['HOME'] %>/",
 ]
