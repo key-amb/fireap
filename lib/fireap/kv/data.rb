@@ -1,9 +1,9 @@
 require 'diplomat'
 
-require 'diffusul/kv'
-require 'diffusul/string'
+require 'fireap/kv'
+require 'fireap/string'
 
-module Diffusul
+module Fireap
   class Kv < Diplomat::Kv
     class Data
       @@accessors = [
@@ -22,8 +22,8 @@ module Diffusul
       end
 
       def self.get(path)
-        Diffusul::Kv.get_data(path) || new({
-          key: Diffusul::Kv::PREFIX + path,
+        Fireap::Kv.get_data(path) || new({
+          key: Fireap::Kv::PREFIX + path,
         })
       end
 
@@ -37,7 +37,7 @@ module Diffusul
 
       # Query Kv and return the new instance
       def refetch
-        Diffusul::Kv.get_data(self.key, with_prefix: true)
+        Fireap::Kv.get_data(self.key, with_prefix: true)
       end
 
       def update(value, cas: false)

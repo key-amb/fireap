@@ -1,9 +1,9 @@
 require 'base64'
 require 'json'
 
-require 'diffusul/string'
+require 'fireap/string'
 
-module Diffusul
+module Fireap
   class EventData
     attr :id, :name, :payload, :node_filter, :service_filter, :tag_filter, :version, :ltime
 

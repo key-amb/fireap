@@ -1,8 +1,8 @@
 require 'base64'
 
-require 'diffusul/kv/data'
+require 'fireap/kv/data'
 
-module Diffusul
+module Fireap
   class Kv < Diplomat::Kv
     class Raw
       @me = nil
@@ -19,7 +19,7 @@ module Diffusul
             data[key.to_snake] = val
           end
         end
-        Diffusul::Kv::Data.new(data)
+        Fireap::Kv::Data.new(data)
       end
     end
   end

@@ -1,14 +1,14 @@
 require 'base64'
 require 'timeout'
 
-require 'diffusul/application'
-require 'diffusul/deployer'
-require 'diffusul/eventdata'
-require 'diffusul/executor'
-require 'diffusul/node'
-require 'diffusul/nodetable'
+require 'fireap/application'
+require 'fireap/deployer'
+require 'fireap/eventdata'
+require 'fireap/executor'
+require 'fireap/node'
+require 'fireap/nodetable'
 
-module Diffusul
+module Fireap
   class Watcher
     @@default_timeout  = 600 # seconds
     @@loop_interval    = 5
@@ -39,7 +39,7 @@ module Diffusul
         streams << ins
       end
 
-      ev_data = Diffusul::EventData.create_by_streams(streams)
+      ev_data = Fireap::EventData.create_by_streams(streams)
       unless ev_data.length > 0
         @ctx.log.debug 'Event not happend yet.'
         return
@@ -61,11 +61,11 @@ module Diffusul
         @ctx.die("Not configured app! #{@event['app']}")
       end
 
-      @deploy = Diffusul::Deployer.new({
+      @deploy = Fireap::Deployer.new({
         'app' => @event['app'],
       }, ctx: @ctx )
 
-      @myapp = Diffusul::Application.find_or_new(@event['app'], @ctx.mynode)
+      @myapp = Fireap::Application.find_or_new(@event['app'], @ctx.mynode)
 
       if @myapp.version.value == @event['version']
         @ctx.log.info "App #{@event['app']} already updated. version=#{@event['version']} Nothing to do."
@@ -81,7 +81,7 @@ module Diffusul
 
       updated = false
       while !updated
-        ntable = Diffusul::NodeTable.instance
+        ntable = Fireap::NodeTable.instance
         ntable.collect_app_info(@myapp, ctx: ctx)
 
         candidates = ntable.select_updated(@myapp, version, ctx: ctx)
@@ -116,7 +116,7 @@ module Diffusul
       new_version = @event['version']
 
       @ctx.log.debug "Start pulling update #{appname} from #{node.name} toward #{new_version}."
-      executor = Diffusul::Executor.new(ctx: @ctx)
+      executor = Fireap::Executor.new(ctx: @ctx)
       @results = executor.run_commands(app: @myapp, remote: node)
 
       failed  = @results.select { |r| r.is_failed?  }

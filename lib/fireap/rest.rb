@@ -1,4 +1,4 @@
-module Diffusul
+module Fireap
   class Rest < Diplomat::RestClient
     @access_methods = [:get]
 
@@ -9,7 +9,7 @@ module Diffusul
           req.options.timeout = 10
         end
       rescue => e
-        logger = Diffusul::Context.new.log
+        logger = Fireap::Context.new.log
         logger.info "REST failed. Data not found. path=#{path}"
         logger.debug e
         return nil

@@ -1,6 +1,6 @@
-require 'diffusul/kv/data'
+require 'fireap/kv/data'
 
-kv1 = Diffusul::Kv::Data.new(
+kv1 = Fireap::Kv::Data.new(
   key: 'version',
   value: 'v0.1',
   modify_index: '1',

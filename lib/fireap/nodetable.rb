@@ -1,9 +1,9 @@
 require 'diplomat'
 require 'singleton'
 
-require 'diffusul/node'
+require 'fireap/node'
 
-module Diffusul
+module Fireap
   class NodeTable
     include Singleton
     attr :nodes
@@ -11,14 +11,14 @@ module Diffusul
     def initialize
       @nodes ||= {}
       Diplomat::Node.get_all.each do |nod|
-        dnode  = Diffusul::Node.new(nod['Node'], nod['Address'])
+        dnode  = Fireap::Node.new(nod['Node'], nod['Address'])
         @nodes[dnode.name] = dnode
       end
     end
 
     def collect_app_info(app, ctx: nil)
       mynode = ctx.mynode if ctx
-      Diffusul::Kv.get_recurse("#{app.name}/nodes/").each do |data|
+      Fireap::Kv.get_recurse("#{app.name}/nodes/").each do |data|
         unless %r|#{app.name}/nodes/([^/]+)/([^/\s]+)$|.match(data.key)
           ctx.die("Unkwon key pattern! key=#{data.key}, val=#{data.value}")
         end
@@ -31,7 +31,7 @@ module Diffusul
         end
 
         node = @nodes[nodename] or ctx.die("Unknown Node! #{nodename}")
-        app  = node.apps[app.name] ||= Diffusul::Application.new(app.name, node: node)
+        app  = node.apps[app.name] ||= Fireap::Application.new(app.name, node: node)
         app.set_kv_prop(propkey, data)
       end
       ctx.log.debug @nodes.to_s

@@ -1,9 +1,9 @@
 require 'socket'
 
-require 'diffusul/application'
-require 'diffusul/kv'
+require 'fireap/application'
+require 'fireap/kv'
 
-module Diffusul
+module Fireap
   class Deployer
     @@default_semaphore = 2
     attr :ctx, :config, :app, :max_semaphore
@@ -17,7 +17,7 @@ module Diffusul
 
     def start(options)
       payload = prepare(options)
-      args = [ 'diffusul:deploy', payload.to_json ]
+      args = [ 'fireap:deploy', payload.to_json ]
       Diplomat::Event.fire(*args)
       self.release_lock
       ctx.log.info "Deploy event fired. data = #{payload.to_s}"
@@ -25,17 +25,17 @@ module Diffusul
 
     def get_lock
       @lock_key ||= "#{@app}/lock"
-      if Diffusul::Kv.get(@lock_key, :return).length > 0
+      if Fireap::Kv.get(@lock_key, :return).length > 0
         @ctx.die("#{@app} is already locked! Probably deploy is ongoing.")
       end
-      unless Diffusul::Kv.put(@lock_key, Socket.gethostname)
+      unless Fireap::Kv.put(@lock_key, Socket.gethostname)
         @ctx.die("Failed to put kv! key=#{@app}")
       end
     end
 
     def release_lock
       @lock_key ||= "#{@app}/lock"
-      unless Diffusul::Kv.delete(@lock_key)
+      unless Fireap::Kv.delete(@lock_key)
         @ctx.die("Failed to delete kv! key=#{@app}")
       end
     end
@@ -49,7 +49,7 @@ module Diffusul
       end
 
       self.get_lock
-      app = Diffusul::Application.find_or_new(@app, @ctx.mynode)
+      app = Fireap::Application.find_or_new(@app, @ctx.mynode)
 
       version = options['version'] || app.version.next_version
       app.semaphore.update(@max_semaphore)

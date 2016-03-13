@@ -1,7 +1,7 @@
 require 'diplomat'
 require 'toml'
 
-module Diffusul
+module Fireap
   class Config
     @@app_props = %w[
       max_semaphores on_command_failure before_commands exec_commands after_commands
@@ -9,7 +9,7 @@ module Diffusul
     @me   = nil
     @appc = nil
 
-    def initialize(path: ENV['DIFFUSUL_CONFIG_PATH'] || 'config/diffusul.toml')
+    def initialize(path: ENV['FIREAP_CONFIG_PATH'] || 'config/fireap.toml')
       @me   = TOML.load_file(path)
       @appc = {}
       configure_diplomat()

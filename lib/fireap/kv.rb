@@ -1,9 +1,9 @@
-require 'diffusul/kv/data'
-require 'diffusul/kv/raw'
+require 'fireap/kv/data'
+require 'fireap/kv/raw'
 
-module Diffusul
+module Fireap
   class Kv < Diplomat::Kv
-    PREFIX = 'diffusul/'
+    PREFIX = 'fireap/'
     @access_methods = [ :get, :put, :delete, :get_data, :get_recurse ]
 
     def get(key, not_found=:reject, options=nil, found=:return)
@@ -15,7 +15,7 @@ module Diffusul
     def get_data(key, with_prefix: nil)
       path = with_prefix ? '/kv/' + key
            :               "/kv/#{PREFIX}" + key
-      unless resp = Diffusul::Rest.get(path)
+      unless resp = Fireap::Rest.get(path)
         return false
       end
       Raw.new(resp.shift).to_data
@@ -24,7 +24,7 @@ module Diffusul
     # Diplomat::Kv#get with option (:recurse => 1) doesn't work.
     # This is a work around.
     def get_recurse(key)
-      unless resp = Diffusul::Rest.get("/kv/#{PREFIX}" + key, params: ['recurse=1'])
+      unless resp = Fireap::Rest.get("/kv/#{PREFIX}" + key, params: ['recurse=1'])
         return []
       end
       resp.map { |kv| Raw.new(kv).to_data }

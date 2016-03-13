@@ -1,29 +1,30 @@
 require 'logger'
 
-require 'diffusul/log'
+require 'fireap/log'
 
-module Diffusul
+module Fireap
   class Context
     attr :config, :log
-    @node = nil # Diffusul::Node of running host
+    @node = nil # Fireap::Node of running host
     @mode = 'production'
 
     def initialize(config_path: nil, dry_run: nil, develop_mode: nil)
       cfg = {}
       cfg[:path] = config_path if config_path
-      @config    = Diffusul::Config.new(cfg)
+      @config    = Fireap::Config.new(cfg)
       @dry_run   = dry_run
       @mode      = 'develop' if develop_mode
       @log       = logger(@config.log)
     end
 
-    def die(message, level=Logger::ERROR, err=Diffusul::Error)
+    def die(message, level=Logger::ERROR, err=Fireap::Error)
+      p message
       @log.log(level, [message, 'at', caller(1).to_s].join(%q{ }))
       raise err, message unless self.develop_mode?
     end
 
     def mynode
-      @node ||= Diffusul::Node.query_agent_self
+      @node ||= Fireap::Node.query_agent_self
     end
 
     def dry_run?
@@ -52,7 +53,7 @@ module Diffusul
       @log.formatter = proc do |level, date, prog, msg|
         "#{date} [#{level}] #{msg} -- #{prog}\n"
       end
-      Diffusul::Log.new(@log, dry_run: dry_run?, develop_mode: develop_mode?)
+      Fireap::Log.new(@log, dry_run: dry_run?, develop_mode: develop_mode?)
     end
   end
 end

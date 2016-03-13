@@ -1,6 +1,6 @@
-require 'diffusul/command'
+require 'fireap/command'
 
-module Diffusul
+module Fireap
   class Executor
     attr :ctx
     def initialize(ctx: nil)
@@ -14,7 +14,7 @@ module Diffusul
 
       @results = []
       formats.each do |fmt|
-        command = Diffusul::Command.new(
+        command = Fireap::Command.new(
           app:    app.name,
           format: fmt,
           remote: remote,

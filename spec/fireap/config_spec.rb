@@ -1,15 +1,15 @@
-require 'diffusul/config'
+require 'fireap/config'
 
 require 'tempfile'
 require 'toml'
 
-class Diffusul::Config
+class Fireap::Config
   def test_me
     @me
   end
 end
 
-class TestDiffusulConfig
+class TestFireapConfig
   attr :parsed, :config
   def initialize(toml)
     @parsed = TOML.parse(toml)
@@ -18,20 +18,20 @@ class TestDiffusulConfig
       fp
     end
 
-    ENV['DIFFUSUL_CONFIG_PATH'] = tmp.path
-    @config = Diffusul::Config.new
+    ENV['FIREAP_CONFIG_PATH'] = tmp.path
+    @config = Fireap::Config.new
   end
 end
 
-describe 'Diffusul::Config' do
+describe 'Fireap::Config' do
   describe 'Basic feature' do
-    tester = TestDiffusulConfig.new(<<"EOS")
+    tester = TestFireapConfig.new(<<"EOS")
 url = "http://localhost:8500"
 enable_debugging = ""
 
 [log]
 level = "INFO"
-file  = "tmp/diffusul.log"
+file  = "tmp/fireap.log"
 EOS
 
     it 'match with TOML' do
@@ -54,7 +54,7 @@ EOS
   end
 
   describe 'App Deploy Settings' do
-    tester = TestDiffusulConfig.new(<<"EOS")
+    tester = TestFireapConfig.new(<<"EOS")
 ## Common Deploy Settings
 [deploy]
 max_semaphores     = 5
