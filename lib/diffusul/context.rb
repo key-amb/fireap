@@ -1,14 +1,17 @@
 require 'logger'
 
 module Diffusul
-  # Singleton class
   class Context
     attr :config, :log
-    @@self = nil
-    @@node = nil # Diffusul::Node of running host
+    @node = nil # Diffusul::Node of running host
+    @mode = 'production'
 
-    def self.get(options={})
-      @@self ||= new(options)
+    def initialize(config_path: nil, develop_mode: nil)
+      cfg = {}
+      cfg[:path] = config_path if config_path
+      @config = Diffusul::Config.new(cfg)
+      @log    = logger(@config.log)
+      @mode   = 'develop' if develop_mode
     end
 
     def die(message, level=Logger::ERROR, err=Diffusul::Error)
@@ -17,17 +20,19 @@ module Diffusul
     end
 
     def mynode
-      @@node ||= Diffusul::Node.new
+      @node ||= Diffusul::Node.new
+    end
+
+    def develop_mode?
+      if    @mode == 'develop' \
+        and flg = @config.enable_debugging \
+        and flg.to_i > 0
+        true
+      end
+      false
     end
 
     private
-
-    def initialize(options={})
-      cfg = {}
-      cfg[:path] = options['config_path'] if options['config_path']
-      @config = Diffusul::Config.new(cfg)
-      @log    = logger(@config.log)
-    end
 
     def logger(config)
       dest   = config['file']   || STDOUT

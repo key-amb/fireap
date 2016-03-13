@@ -39,6 +39,5 @@ module Diffusul
     def delete(key, options=nil)
       super(PREFIX + key, options)
     end
-
   end
 end

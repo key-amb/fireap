@@ -21,7 +21,7 @@ module Diffusul
       else
         %w[version semaphore].each do |key|
           app.set_kv_prop(key, Diffusul::Kv::Data.new({
-            key: [path, key].join('/'),
+            key: Diffusul::Kv::PREFIX + [path, key].join('/'),
           }))
         end
       end

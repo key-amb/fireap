@@ -10,40 +10,39 @@ module Diffusul
     @ctx
     package_name "Diffusul::CLI"
     class_option 'config', :aliases => 'c'
+    class_option 'debug',  :aliases => 'd'
 
     desc 'deploy', 'Deploy target app'
     option 'app', :required => true, :aliases => 'a'
     option 'version', :aliases => 'v'
     def deploy
-      load_ctx(options['config'])
+      load_context(options)
       Diffusul::Deploy.new(options, ctx: @ctx).start(options)
     end
 
     desc 'watch', 'Watch Deploy Event'
     def watch
-      load_ctx(options['config'])
-      events = ''
-      while ins = $stdin.gets
-        events << ins
-      end
-      Diffusul::Watch.handle(events: events, ctx: @ctx)
+      load_context(options)
+      Diffusul::Watch.new(options, ctx: @ctx).wait_and_handle
     end
 
     desc 'clear', 'Clear deploy lock of target app'
     option 'app', :required => true, :aliases => 'a'
     def clear
-      load_ctx(options['config'])
+      load_context(options)
       Diffusul::Deploy.new(options, ctx: @ctx).release_lock
       puts "Successfully cleared lock for app=#{options['app']}."
     end
 
     private
 
-    def load_ctx(path)
+    def load_context(options)
       @ctx ||= proc {
-        opt = {}
-        opt['config_path'] = path if path
-        Diffusul::Context.get(opt)
+        opt = {
+          config_path:  options['config'],
+          develop_mode: options['debug'],
+        }
+        Diffusul::Context.new(opt)
       }.call
     end
   end

@@ -1,5 +1,6 @@
 ## General Settings
 # url = "http://localhost:8500"
+# enable_debugging = "true"
 
 [log]
 level  = "INFO"  # from Ruby Logger::LEVEL
