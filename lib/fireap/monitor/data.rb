@@ -12,7 +12,17 @@ module Fireap
       def fetch
         ntbl  = Fireap::NodeTable.instance
         ntbl.collect_app_info(@app, ctx: @ctx)
-        ntbl.nodes.values
+        ntbl.nodes.values.map do |n|
+          nap  = n.apps[@app.name]
+          last = nap.update_info
+          {
+            name:        n.name,
+            version:     nap.version.value,
+            semaphore:   nap.semaphore.value,
+            update_at:   last.updated_at,
+            remote_node: last.remote_node,
+          }
+        end
       end
     end
   end

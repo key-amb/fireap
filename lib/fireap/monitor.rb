@@ -19,12 +19,12 @@ module Fireap
       int = 0
       Signal.trap(:INT) { int = 1 }
 
-      disp = Display.new(@appname, @data.fetch.sort)
+      disp = Display.new(@appname, DataUtil.sort(@data.fetch))
       while int == 0
         @screen.clear
         @screen.draw(disp.content)
         sleep @interval
-        disp.update(@appname, @data.fetch.sort)
+        disp.update(@appname, DataUtil.sort(@data.fetch))
       end
 
       @screen.finalize
@@ -34,8 +34,18 @@ module Fireap
 
     def capture(options)
       list = @data.fetch
-      disp = Display.new(@appname, list.sort)
+      disp = Display.new(@appname, DataUtil.sort(list))
       disp.show
+    end
+
+    module DataUtil
+      module_function
+      def sort(nodes)
+        nodes.sort do |a,b|
+          ret = b[:version] <=> a[:version]
+          ret == 0 ? a[:name] <=> b[:name] : ret
+        end
+      end
     end
   end
 end

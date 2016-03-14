@@ -28,14 +28,12 @@ module Fireap
         tt.head = %w[ Name Version Sem Date From ]
 
         @nodes.each do |n|
-          nap  = n.apps[@appname]
-          last = nap.update_info
           tt.rows << [
-            n.name,
-            nap.version.value   || '-',
-            nap.semaphore.value || '-',
-            last.updated_at     || '-',
-            last.remote_node    || '-',
+            n[:name],
+            n[:version]     || '-',
+            n[:semaphore]   || '-',
+            n[:update_at]   || '-',
+            n[:remote_node] || '-',
           ]
         end
 
