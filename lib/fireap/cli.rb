@@ -40,7 +40,7 @@ module Fireap
     option 'app', :required => true, :aliases => 'a'
     def monitor
       load_context(options)
-      Fireap::Monitor.new(options, ctx: @ctx).capture(options)
+      Fireap::Monitor.new(options, ctx: @ctx).monitor(options)
     end
 
     private
