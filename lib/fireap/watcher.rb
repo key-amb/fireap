@@ -135,6 +135,10 @@ module Fireap
       # Update succeeded. So set node's version and semaphore
       @myapp.semaphore.update(deploy.max_semaphore)
       @myapp.version.update(new_version)
+      @myapp.update_info.update({
+        updated_at:  Time.now.to_s,
+        remote_node: node.name,
+      }.to_json)
       @ctx.log.info "[#{@ctx.mynode.name}] Updated app #{appname} to version #{new_version} ."
     end
 

@@ -1,7 +1,5 @@
 require 'logger'
 
-require 'fireap/log'
-
 module Fireap
   class Context
     attr :config, :log
