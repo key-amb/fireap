@@ -19,8 +19,8 @@ module Fireap
             name:        n.name,
             version:     nap.version.value,
             semaphore:   nap.semaphore.value,
-            update_at:   last.updated_at,
-            remote_node: last.remote_node,
+            update_at:   last ? last.updated_at  : nil,
+            remote_node: last ? last.remote_node : nil,
           }
         end
       end
