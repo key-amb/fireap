@@ -53,7 +53,7 @@ module Fireap
       @log.formatter = proc do |level, date, prog, msg|
         "#{date} [#{level}] #{msg} -- #{prog}\n"
       end
-      Fireap::Log.new(@log, dry_run: dry_run?, develop_mode: develop_mode?)
+      @log
     end
   end
 end
