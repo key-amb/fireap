@@ -92,7 +92,7 @@ module Fireap
 
         candidates.each_pair do |host, node|
           if mynode.name == host
-            ctx.log.info "Event transmitter is myself. #{host} Skip."
+            ctx.log.info "Candidate node is myself. #{host} Skip."
             next unless ctx.develop_mode?
           end
 

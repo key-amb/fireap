@@ -16,14 +16,14 @@ module Fireap
     end
 
     def self.find_or_new(name, node)
-      app  = new(name, node: node)
-      path = "#{name}/nodes/#{node.name}"
+      app     = new(name, node: node)
+      path    = "#{name}/nodes/#{node.name}"
       kv_data = Fireap::Kv.get_recurse(path)
+      if kv_data.length > 0
+        kv_data.each { |kv| app.set_kv_prop(File.basename(kv.key), kv) }
+      end
       %w[version semaphore update_info].each do |key|
-        if kv_data.length > 0 and
-          i = kv_data.index { |kv| kv.key == key }
-          kv_data[i].tap { |kv| app.set_kv_prop(File.basename(kv.key), kv) }
-        else
+        unless app.instance_variable_get("@#{key}")
           app.set_kv_prop(key, Fireap::Kv::Data.new({
             key: Fireap::Kv::PREFIX + [path, key].join('/'),
           }))
