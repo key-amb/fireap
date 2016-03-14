@@ -35,7 +35,7 @@ after_commands = [
 [deploy.apps.foo]
 # max_semaphores  = 3
 # before_commands = []
-commands = [
+exec_commands = [
     #"scp -rp <%= @remote.name %>:<%= ENV['HOME'] %>/<%= @app %> <%= ENV['HOME'] %>/"
     "scp -rp <%= @remote.address %>:<%= ENV['HOME'] %>/<%= @app %> <%= ENV['HOME'] %>/"
 ]

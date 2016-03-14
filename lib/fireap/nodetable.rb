@@ -38,14 +38,20 @@ module Fireap
     end
 
     def select_updated(app, version, ctx: nil)
-      @nodes.select do |name, node|
-        napp = node.apps[app.name] or ctx.die("Can't find app #{app.name} from node #{name}!")
-        version   = napp.version.value
+      updated = {}
+      @nodes.each_pair do |name, node|
+        unless napp = node.apps[app.name]
+          ctx.log.debug "Not found app:#{app.name} for node:#{name}"
+          next
+        end
+        nversion  = napp.version.value
         semaphore = napp.semaphore.value
-        ctx.log.debug "Node #{name} - Version = #{version}, Semaphore=#{semaphore}"
-        (napp.version == version && semaphore > 0) \
-          or ctx.develop_mode?
+        ctx.log.debug "Node #{name} - Version = #{nversion}, Semaphore=#{semaphore}"
+        if (nversion == version && semaphore.to_i > 0) or ctx.develop_mode?
+          updated[name] = node
+        end
       end
+      updated
     end
   end
 end
