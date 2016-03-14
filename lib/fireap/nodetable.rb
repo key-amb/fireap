@@ -17,7 +17,6 @@ module Fireap
     end
 
     def collect_app_info(app, ctx: nil)
-      mynode = ctx.mynode if ctx
       Fireap::Kv.get_recurse("#{app.name}/nodes/").each do |data|
         unless %r|#{app.name}/nodes/([^/]+)/([^/\s]+)$|.match(data.key)
           ctx.die("Unkwon key pattern! key=#{data.key}, val=#{data.value}")
@@ -25,10 +24,6 @@ module Fireap
         nodename = $1
         propkey  = $2
         ctx.log.debug 'Got kv. %s:%s => %s'%[nodename, propkey, data.value]
-        if mynode and mynode.name == nodename
-          ctx.log.info "Event transmitter is myself. #{nodename} Skip."
-          next unless ctx.develop_mode?
-        end
 
         node = @nodes[nodename] or ctx.die("Unknown Node! #{nodename}")
         app  = node.apps[app.name] ||= Fireap::Application.new(app.name, node: node)

@@ -78,21 +78,27 @@ module Fireap
     def update_myapp
       appname = @myapp.name
       version = @event['version']
+      mynode  = @ctx.mynode
 
       updated = false
       while !updated
         ntable = Fireap::NodeTable.instance
-        ntable.collect_app_info(@myapp, ctx: ctx)
+        ntable.collect_app_info(@myapp, ctx: @ctx)
 
-        candidates = ntable.select_updated(@myapp, version, ctx: ctx)
+        candidates = ntable.select_updated(@myapp, version, ctx: @ctx)
         if candidates.empty?
-          ctx.die("Can't fetch updated app from any node! app=#{appname}, version=#{version}")
+          @ctx.die("Can't fetch updated app from any node! app=#{appname}, version=#{version}")
         end
 
         candidates.each_pair do |host, node|
+          if mynode.name == host
+            ctx.log.info "Event transmitter is myself. #{host} Skip."
+            next unless ctx.develop_mode?
+          end
+
           nodeapp = node.apps[appname]
           unless nodeapp.semaphore.consume(cas: true)
-            ctx.log.debug "Can't get semaphore from #{host}; app=#{appname}"
+            @ctx.log.debug "Can't get semaphore from #{host}; app=#{appname}"
             next
           end
 
@@ -102,7 +108,7 @@ module Fireap
             break
           ensure
             unless restore_semaphore(nodeapp.semaphore)
-              ctx.die("Failed to restore semaphore! app=#{appname}, node=#{host}")
+              @ctx.die("Failed to restore semaphore! app=#{appname}, node=#{host}")
             end
           end
         end
