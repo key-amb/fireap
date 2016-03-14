@@ -3,6 +3,7 @@ require 'thor'
 require 'fireap/config'
 require 'fireap/context'
 require 'fireap/deployer'
+require 'fireap/monitor'
 require 'fireap/watcher'
 
 module Fireap
@@ -33,6 +34,13 @@ module Fireap
       load_context(options)
       Fireap::Deployer.new(options, ctx: @ctx).release_lock
       puts "Successfully cleared lock for app=#{options['app']}."
+    end
+
+    desc 'monitor', 'Monitor deploy propagation of target app'
+    option 'app', :required => true, :aliases => 'a'
+    def monitor
+      load_context(options)
+      Fireap::Monitor.new(options, ctx: @ctx).capture(options)
     end
 
     private
