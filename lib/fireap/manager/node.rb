@@ -1,7 +1,7 @@
 require 'diplomat'
 require 'singleton'
 
-require 'fireap/node'
+require 'fireap/model/node'
 
 module Fireap::Manager
   class Node
@@ -11,7 +11,7 @@ module Fireap::Manager
     def initialize
       @nodes ||= {}
       Diplomat::Node.get_all.each do |nod|
-        dnode  = Fireap::Node.new(nod['Node'], nod['Address'])
+        dnode  = Fireap::Model::Node.new(nod['Node'], nod['Address'])
         @nodes[dnode.name] = dnode
       end
     end

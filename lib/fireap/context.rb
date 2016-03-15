@@ -3,7 +3,7 @@ require 'logger'
 module Fireap
   class Context
     attr :config, :log
-    @node = nil # Fireap::Node of running host
+    @node = nil # Fireap::Model::Node of running host
     @mode = 'production'
 
     def initialize(config_path: nil, dry_run: nil, develop_mode: nil)
@@ -22,7 +22,7 @@ module Fireap
     end
 
     def mynode
-      @node ||= Fireap::Node.query_agent_self
+      @node ||= Fireap::Model::Node.query_agent_self
     end
 
     def dry_run?

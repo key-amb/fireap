@@ -5,7 +5,7 @@ require 'fireap/application'
 require 'fireap/deployer'
 require 'fireap/model/event'
 require 'fireap/executor'
-require 'fireap/node'
+require 'fireap/model/node'
 require 'fireap/manager/node'
 
 module Fireap

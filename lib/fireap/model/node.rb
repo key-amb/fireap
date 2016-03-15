@@ -2,7 +2,7 @@ require 'fireap/application'
 require 'fireap/manager/node'
 require 'fireap/rest'
 
-module Fireap
+module Fireap::Model
   class Node
     attr :name, :address, :apps
 
