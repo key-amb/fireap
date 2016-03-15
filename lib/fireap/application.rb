@@ -18,7 +18,7 @@ module Fireap
     def self.find_or_new(name, node)
       app     = new(name, node: node)
       path    = "#{name}/nodes/#{node.name}"
-      kv_data = Fireap::Kv.get_recurse(path)
+      kv_data = Fireap::DataAccess::Kv.get_recurse(path)
       if kv_data.length > 0
         kv_data.each { |kv| app.set_kv_prop(File.basename(kv.key), kv) }
       end

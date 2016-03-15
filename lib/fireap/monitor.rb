@@ -1,4 +1,4 @@
-require 'fireap/kv'
+require 'fireap/data_access/kv'
 require 'fireap/monitor/data'
 require 'fireap/monitor/display'
 require 'fireap/monitor/screen'

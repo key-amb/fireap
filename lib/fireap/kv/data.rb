@@ -1,6 +1,6 @@
 require 'diplomat'
 
-require 'fireap/kv'
+require 'fireap/data_access/kv'
 require 'fireap/util/string'
 
 module Fireap
@@ -22,7 +22,7 @@ module Fireap
       end
 
       def self.get(path)
-        Fireap::Kv.get_data(path) || new({
+        Fireap::DataAccess::Kv.get_data(path) || new({
           key: Fireap::Kv::PREFIX + path,
         })
       end
@@ -37,7 +37,7 @@ module Fireap
 
       # Query Kv and return the new instance
       def refetch
-        Fireap::Kv.get_data(self.key, with_prefix: true)
+        Fireap::DataAccess::Kv.get_data(self.key, with_prefix: true)
       end
 
       def update(value, cas: false)

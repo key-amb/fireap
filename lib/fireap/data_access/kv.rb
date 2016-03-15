@@ -1,7 +1,8 @@
+require 'fireap/data_access'
 require 'fireap/kv/data'
 require 'fireap/kv/raw'
 
-module Fireap
+module Fireap::DataAccess
   class Kv < Diplomat::Kv
     PREFIX = 'fireap/'
     @access_methods = [ :get, :put, :delete, :get_data, :get_recurse ]

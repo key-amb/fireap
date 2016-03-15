@@ -1,7 +1,7 @@
 require 'socket'
 
 require 'fireap/application'
-require 'fireap/kv'
+require 'fireap/data_access/kv'
 
 module Fireap
   class Deployer
@@ -25,17 +25,17 @@ module Fireap
 
     def get_lock
       @lock_key ||= "#{@app}/lock"
-      if Fireap::Kv.get(@lock_key, :return).length > 0
+      if Fireap::DataAccess::Kv.get(@lock_key, :return).length > 0
         @ctx.die("#{@app} is already locked! Probably deploy is ongoing.")
       end
-      unless Fireap::Kv.put(@lock_key, Socket.gethostname)
+      unless Fireap::DataAccess::Kv.put(@lock_key, Socket.gethostname)
         @ctx.die("Failed to put kv! key=#{@app}")
       end
     end
 
     def release_lock
       @lock_key ||= "#{@app}/lock"
-      unless Fireap::Kv.delete(@lock_key)
+      unless Fireap::DataAccess::Kv.delete(@lock_key)
         @ctx.die("Failed to delete kv! key=#{@app}")
       end
     end

@@ -17,7 +17,7 @@ module Fireap
     end
 
     def collect_app_info(app, ctx: nil)
-      Fireap::Kv.get_recurse("#{app.name}/nodes/").each do |data|
+      Fireap::DataAccess::Kv.get_recurse("#{app.name}/nodes/").each do |data|
         unless %r|#{app.name}/nodes/([^/]+)/([^/\s]+)$|.match(data.key)
           ctx.die("Unkwon key pattern! key=#{data.key}, val=#{data.value}")
         end
