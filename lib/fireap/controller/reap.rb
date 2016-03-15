@@ -8,8 +8,8 @@ require 'fireap/executor'
 require 'fireap/model/node'
 require 'fireap/manager/node'
 
-module Fireap
-  class Watcher
+module Fireap::Controller
+  class Reap
     @@default_timeout  = 600 # seconds
     @@loop_interval    = 5
     @@restore_interval = 3

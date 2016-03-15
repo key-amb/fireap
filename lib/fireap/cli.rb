@@ -4,7 +4,7 @@ require 'fireap/config'
 require 'fireap/context'
 require 'fireap/controller/fire'
 require 'fireap/monitor'
-require 'fireap/watcher'
+require 'fireap/controller/reap'
 
 module Fireap
   class CLI < Thor
@@ -25,7 +25,7 @@ module Fireap
     option 'dry-run', :aliases => 'n'
     def reap
       load_context(options)
-      Fireap::Watcher.new(options, ctx: @ctx).wait_and_handle
+      Fireap::Controller::Reap.new(options, ctx: @ctx).wait_and_handle
     end
 
     desc 'clear', 'Clear deploy lock of target app'
