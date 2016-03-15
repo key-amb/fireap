@@ -87,7 +87,9 @@ module Fireap
 
         candidates = ntable.select_updated(@myapp, version, ctx: @ctx)
         if candidates.empty?
-          @ctx.die("Can't fetch updated app from any node! app=#{appname}, version=#{version}")
+          @ctx.log.warn "Can't fetch updated app from any node! app=#{appname}, version=#{version}"
+          sleep @@loop_interval
+          next
         end
 
         candidates.each_pair do |host, node|
