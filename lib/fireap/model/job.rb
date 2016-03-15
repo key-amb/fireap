@@ -1,7 +1,7 @@
 require 'fireap/command'
 
-module Fireap
-  class Executor
+module Fireap::Model
+  class Job
     attr :ctx
     def initialize(ctx: nil)
       @ctx = ctx

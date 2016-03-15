@@ -4,7 +4,7 @@ require 'timeout'
 require 'fireap/application'
 require 'fireap/controller/fire'
 require 'fireap/model/event'
-require 'fireap/executor'
+require 'fireap/model/job'
 require 'fireap/model/node'
 require 'fireap/manager/node'
 
@@ -122,7 +122,7 @@ module Fireap::Controller
       new_version = @event['version']
 
       @ctx.log.debug "Start pulling update #{appname} from #{node.name} toward #{new_version}."
-      executor = Fireap::Executor.new(ctx: @ctx)
+      executor = Fireap::Model::Job.new(ctx: @ctx)
       @results = executor.run_commands(app: @myapp, remote: node)
 
       failed  = @results.select { |r| r.is_failed?  }
