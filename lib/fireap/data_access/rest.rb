@@ -1,4 +1,4 @@
-module Fireap
+module Fireap::DataAccess
   class Rest < Diplomat::RestClient
     @access_methods = [:get]
 

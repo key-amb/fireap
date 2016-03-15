@@ -16,7 +16,7 @@ module Fireap::DataAccess
     def get_data(key, with_prefix: nil)
       path = with_prefix ? '/kv/' + key
            :               "/kv/#{@@prefix}" + key
-      unless resp = Fireap::Rest.get(path)
+      unless resp = Fireap::DataAccess::Rest.get(path)
         return false
       end
       Raw.new(resp.shift).to_data
@@ -25,7 +25,7 @@ module Fireap::DataAccess
     # Diplomat::Kv#get with option (:recurse => 1) doesn't work.
     # This is a work around.
     def get_recurse(key)
-      unless resp = Fireap::Rest.get("/kv/#{@@prefix}" + key, params: ['recurse=1'])
+      unless resp = Fireap::DataAccess::Rest.get("/kv/#{@@prefix}" + key, params: ['recurse=1'])
         return []
       end
       resp.map { |kv| Raw.new(kv).to_data }
