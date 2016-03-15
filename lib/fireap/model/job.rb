@@ -1,4 +1,4 @@
-require 'fireap/command'
+require 'fireap/model/command'
 
 module Fireap::Model
   class Job
@@ -14,7 +14,7 @@ module Fireap::Model
 
       @results = []
       formats.each do |fmt|
-        command = Fireap::Command.new(
+        command = Fireap::Model::Command.new(
           app:    app.name,
           format: fmt,
           remote: remote,
