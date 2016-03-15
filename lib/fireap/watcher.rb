@@ -2,7 +2,7 @@ require 'base64'
 require 'timeout'
 
 require 'fireap/application'
-require 'fireap/deployer'
+require 'fireap/controller/fire'
 require 'fireap/model/event'
 require 'fireap/executor'
 require 'fireap/model/node'
@@ -61,7 +61,7 @@ module Fireap
         @ctx.die("Not configured app! #{@event['app']}")
       end
 
-      @deploy = Fireap::Deployer.new({
+      @deploy = Fireap::Controller::Fire.new({
         'app' => @event['app'],
       }, ctx: @ctx )
 

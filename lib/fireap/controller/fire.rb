@@ -3,8 +3,8 @@ require 'socket'
 require 'fireap/application'
 require 'fireap/data_access/kv'
 
-module Fireap
-  class Deployer
+module Fireap::Controller
+  class Fire
     @@default_semaphore = 2
     attr :ctx, :config, :app, :max_semaphore
 

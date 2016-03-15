@@ -2,7 +2,7 @@ require 'thor'
 
 require 'fireap/config'
 require 'fireap/context'
-require 'fireap/deployer'
+require 'fireap/controller/fire'
 require 'fireap/monitor'
 require 'fireap/watcher'
 
@@ -18,7 +18,7 @@ module Fireap
     option 'version', :aliases => 'v'
     def fire
       load_context(options)
-      Fireap::Deployer.new(options, ctx: @ctx).start(options)
+      Fireap::Controller::Fire.new(options, ctx: @ctx).start(options)
     end
 
     desc 'reap', 'Watch and Reap a deploy event'
@@ -32,7 +32,7 @@ module Fireap
     option 'app', :required => true, :aliases => 'a'
     def clear
       load_context(options)
-      Fireap::Deployer.new(options, ctx: @ctx).release_lock
+      Fireap::Controller::Fire.new(options, ctx: @ctx).release_lock
       puts "Successfully cleared lock for app=#{options['app']}."
     end
 
