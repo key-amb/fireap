@@ -1,4 +1,3 @@
-require 'fireap/data_access'
 require 'fireap/kv/data'
 require 'fireap/kv/raw'
 
