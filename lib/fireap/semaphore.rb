@@ -1,7 +1,7 @@
-require 'fireap/kv/data'
+require 'fireap/model/kv'
 
 module Fireap
-  class Semaphore < Fireap::Kv::Data
+  class Semaphore < Fireap::Model::Kv
     def consume(cas: false)
       if @value.to_i <= 0
         raise "No more semaphore! val=#{@value}"

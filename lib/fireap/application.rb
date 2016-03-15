@@ -24,7 +24,7 @@ module Fireap
       end
       %w[version semaphore update_info].each do |key|
         unless app.instance_variable_get("@#{key}")
-          app.set_kv_prop(key, Fireap::Kv::Data.new({
+          app.set_kv_prop(key, Fireap::Model::Kv.new({
             key: Fireap::Kv::PREFIX + [path, key].join('/'),
           }))
         end
@@ -55,7 +55,7 @@ module Fireap
       end
     end
 
-    class UpdateInfo < Fireap::Kv::Data
+    class UpdateInfo < Fireap::Model::Kv
       attr :updated_at, :remote_node
 
       def initialize(params)

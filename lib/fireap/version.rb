@@ -1,7 +1,7 @@
-require 'fireap/kv/data'
+require 'fireap/model/kv'
 
 module Fireap
-  class Version < Fireap::Kv::Data
+  class Version < Fireap::Model::Kv
     def initialize(params)
       super(params)
       @value ||= '0'
