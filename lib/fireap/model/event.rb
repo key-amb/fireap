@@ -3,8 +3,8 @@ require 'json'
 
 require 'fireap/util/string'
 
-module Fireap
-  class EventData
+module Fireap::Model
+  class Event
     attr :id, :name, :payload, :node_filter, :service_filter, :tag_filter, :version, :ltime
 
     def initialize(data)

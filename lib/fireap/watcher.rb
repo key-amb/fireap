@@ -3,7 +3,7 @@ require 'timeout'
 
 require 'fireap/application'
 require 'fireap/deployer'
-require 'fireap/eventdata'
+require 'fireap/model/event'
 require 'fireap/executor'
 require 'fireap/node'
 require 'fireap/nodetable'
@@ -39,7 +39,7 @@ module Fireap
         streams << ins
       end
 
-      ev_data = Fireap::EventData.create_by_streams(streams)
+      ev_data = Fireap::Model::Event.create_by_streams(streams)
       unless ev_data.length > 0
         @ctx.log.debug 'Event not happend yet.'
         return
