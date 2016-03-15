@@ -33,8 +33,7 @@ module Fireap
     end
 
     def capture(options)
-      list = @data.fetch
-      disp = Display.new(@appname, DataUtil.sort(list))
+      disp = Display.new(@appname, DataUtil.sort(@data.fetch))
       disp.show
     end
 

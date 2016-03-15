@@ -13,15 +13,9 @@ module Fireap
         ntbl  = Fireap::NodeTable.instance
         ntbl.collect_app_info(@app, ctx: @ctx)
         ntbl.nodes.values.map do |n|
-          nap  = n.apps[@app.name]
-          last = nap.update_info
-          {
-            name:        n.name,
-            version:     nap.version.value,
-            semaphore:   nap.semaphore.value,
-            update_at:   last ? last.updated_at  : nil,
-            remote_node: last ? last.remote_node : nil,
-          }
+          nodeh = { name: n.name }
+          apph  = n.apps[@app.name].to_hash
+          apph.merge(nodeh)
         end
       end
     end

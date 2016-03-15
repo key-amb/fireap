@@ -29,6 +29,11 @@ module Fireap
         app  = node.apps[app.name] ||= Fireap::Application.new(app.name, node: node)
         app.set_kv_prop(propkey, data)
       end
+      @nodes.each_pair do |name, node|
+        unless node.has_app?(app.name)
+          node.apps[app.name] ||= Fireap::Application.new(app.name, node: node)
+        end
+      end
       ctx.log.debug @nodes.to_s
     end
 
@@ -39,8 +44,9 @@ module Fireap
           ctx.log.debug "Not found app:#{app.name} for node:#{name}"
           next
         end
-        nversion  = napp.version.value
-        semaphore = napp.semaphore.value
+        napph = napp.to_hash
+        nversion  = napph[:version]
+        semaphore = napph[:semaphore]
         ctx.log.debug "Node #{name} - Version = #{nversion}, Semaphore=#{semaphore}"
         if (nversion == version && semaphore.to_i > 0) or ctx.develop_mode?
           updated[name] = node

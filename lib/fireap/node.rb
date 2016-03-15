@@ -16,5 +16,9 @@ module Fireap
       resp = Fireap::Rest.get('/agent/self')
       new(resp['Member']['Name'], resp['Member']['Address'])
     end
+
+    def has_app?(appname)
+      @apps[appname] ? true : false
+    end
   end
 end
