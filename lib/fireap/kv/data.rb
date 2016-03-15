@@ -1,7 +1,7 @@
 require 'diplomat'
 
 require 'fireap/kv'
-require 'fireap/string'
+require 'fireap/util/string'
 
 module Fireap
   class Kv < Diplomat::Kv

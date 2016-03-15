@@ -1,4 +1,4 @@
-require 'fireap/string'
+require 'fireap/util/string'
 
 describe 'to_snake - string converter' do
   {

@@ -1,7 +1,7 @@
 require 'base64'
 require 'json'
 
-require 'fireap/string'
+require 'fireap/util/string'
 
 module Fireap
   class EventData
