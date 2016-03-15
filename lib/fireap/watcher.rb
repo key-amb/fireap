@@ -6,7 +6,7 @@ require 'fireap/deployer'
 require 'fireap/model/event'
 require 'fireap/executor'
 require 'fireap/node'
-require 'fireap/nodetable'
+require 'fireap/manager/node'
 
 module Fireap
   class Watcher
@@ -82,7 +82,7 @@ module Fireap
 
       updated = false
       while !updated
-        ntable = Fireap::NodeTable.instance
+        ntable = Fireap::Manager::Node.instance
         ntable.collect_app_info(@myapp, ctx: @ctx)
 
         candidates = ntable.select_updated(@myapp, version, ctx: @ctx)

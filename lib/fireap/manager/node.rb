@@ -3,8 +3,8 @@ require 'singleton'
 
 require 'fireap/node'
 
-module Fireap
-  class NodeTable
+module Fireap::Manager
+  class Node
     include Singleton
     attr :nodes
 

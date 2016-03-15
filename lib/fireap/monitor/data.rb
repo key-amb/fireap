@@ -1,5 +1,5 @@
 require 'fireap/application'
-require 'fireap/nodetable'
+require 'fireap/manager/node'
 
 module Fireap
   class Monitor
@@ -10,7 +10,7 @@ module Fireap
       end
 
       def fetch
-        ntbl  = Fireap::NodeTable.instance
+        ntbl  = Fireap::Manager::Node.instance
         ntbl.collect_app_info(@app, ctx: @ctx)
         ntbl.nodes.values.map do |n|
           nodeh = { name: n.name }

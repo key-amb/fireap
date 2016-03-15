@@ -1,5 +1,5 @@
 require 'fireap/application'
-require 'fireap/nodetable'
+require 'fireap/manager/node'
 require 'fireap/rest'
 
 module Fireap
