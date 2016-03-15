@@ -12,7 +12,7 @@ module Fireap
         if k == 'Payload'
           v = JSON.parse( Base64.decode64(v) )
         end
-        instance_variable_set("@#{k.to_snake}", v)
+        instance_variable_set("@#{k.to_snakecase}", v)
       end
     end
 

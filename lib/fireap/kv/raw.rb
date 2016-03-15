@@ -14,9 +14,9 @@ module Fireap
         data = {}
         @me.each do |key, val|
           if key == 'Value'
-            data[key.to_snake] = Base64.decode64(val)
+            data[key.to_snakecase] = Base64.decode64(val)
           else
-            data[key.to_snake] = val
+            data[key.to_snakecase] = val
           end
         end
         Fireap::Kv::Data.new(data)
