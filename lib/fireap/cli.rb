@@ -3,7 +3,7 @@ require 'thor'
 require 'fireap/config'
 require 'fireap/context'
 require 'fireap/controller/fire'
-require 'fireap/monitor'
+require 'fireap/controller/monitor'
 require 'fireap/controller/reap'
 
 module Fireap
