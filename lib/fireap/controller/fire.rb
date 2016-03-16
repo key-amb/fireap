@@ -54,8 +54,7 @@ EOS
     private
 
     def prepare_event(options)
-      config  = @ctx.config.task
-      unless config['apps'][@appname]
+      unless @ctx.config.app_config(@appname)
         @ctx.die("Not configured app! #{@appname}")
       end
 

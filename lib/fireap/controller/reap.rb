@@ -15,11 +15,12 @@ module Fireap::Controller
     @@restore_interval = 3
     @@restore_retry    = 3
 
-    attr :ctx, :event, :task, :myapp
-
     def initialize(options, ctx)
-      @ctx    = ctx
-      @config = ctx.config
+      @ctx     = ctx
+      @config  = ctx.config
+      @event   = nil
+      @appconf = nil
+      @myapp   = nil
     end
 
     def reap
@@ -48,20 +49,16 @@ module Fireap::Controller
     def handle_event
       return unless prepare()
 
-      watch_sec = @config.task['watch_timeout'] || @@default_timeout
+      watch_sec = @appconf.watch_timeout || @@default_timeout
       Timeout.timeout(watch_sec) do |t|
         update_myapp()
       end
     end
 
     def prepare
-      unless @config.task['apps'][@event['app']]
+      unless @appconf = @config.app_config(@event['app'])
         @ctx.die("Not configured app! #{@event['app']}")
       end
-
-      @task = Fireap::Controller::Fire.new({
-        'app' => @event['app'],
-      }, ctx: @ctx )
 
       @myapp = Fireap::Model::Application.find_or_new(@event['app'], @ctx.mynode)
 
@@ -90,8 +87,8 @@ module Fireap::Controller
 
         candidates.each_pair do |host, node|
           if mynode.name == host
-            ctx.log.info "Candidate node is myself. #{host} Skip."
-            next unless ctx.develop_mode?
+            @ctx.log.info "Candidate node is myself. #{host} Skip."
+            next unless @ctx.develop_mode?
           end
 
           nodeapp = node.apps[appname]
@@ -137,7 +134,7 @@ module Fireap::Controller
       end
 
       # Update succeeded. So set node's version and semaphore
-      @myapp.semaphore.update(task.max_semaphore)
+      @myapp.semaphore.update(@appconf.max_semaphores)
       @myapp.version.update(new_version)
       @myapp.update_info.update({
         updated_at:  Time.now.to_s,
