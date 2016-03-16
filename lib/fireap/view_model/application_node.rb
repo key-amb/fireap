@@ -4,9 +4,8 @@ module Fireap::ViewModel
   class ApplicationNode
     attr :appname, :version, :semaphore, :updated_at, :remote_node
 
-    # Arguments:
-    # - app:  Fireap::Model::Application
-    # - node: Fireap::Model::Node
+    # @param app  [Fireap::Model::Application]
+    # @param node [Fireap::Model::Node]
 
     def initialize(app, node)
       @app  = app
@@ -19,9 +18,7 @@ module Fireap::ViewModel
       @remote_node = app.update_info ? app.update_info.remote_node : '-'
     end
 
-    #--
-    # For sorting in view
-    #++
+    # @note For sorting in view
     def <=>(other)
       ret = other.version <=> self.version
       return ret if ret == 0
