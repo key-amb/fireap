@@ -58,6 +58,7 @@ EOS
 ## Common Task Settings
 [task]
 max_semaphores     = 5
+watch_timeout      = 120
 on_command_failure = "abort"
 before_commands = [ "common before" ]
 exec_commands   = [ "common exec" ]
@@ -72,12 +73,18 @@ after_commands  = [ "foo after" ]
 [task.apps.bar]
 EOS
 
+    describe 'Not configured App' do
+      it 'return nil' do
+        expect( tester.config.app_config('baz') ).to be nil
+      end
+    end
+
     describe 'App = "foo"' do
       parsed = tester.parsed['task']
       appc   = tester.config.app_config('foo')
 
       %w[ max_semaphores on_command_failure ].each do |key|
-        it key do
+        it "#{key} is overridden" do
           expect( appc.send(key) ).to eq parsed['apps']['foo'][key]
         end
       end
@@ -103,8 +110,8 @@ EOS
       parsed = tester.parsed['task']
       appc   = tester.config.app_config('bar')
 
-      %w[ max_semaphores on_command_failure ].each do |key|
-        it key do
+      %w[ max_semaphores watch_timeout on_command_failure ].each do |key|
+        it "#{key} - common setting is chosen" do
           expect( appc.send(key) ).to eq parsed[key]
         end
       end
