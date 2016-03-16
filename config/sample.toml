@@ -10,8 +10,9 @@ rotate = "daily" # from Ruby Logger shift_age
 ## Common Task Settings
 # Can be overridden by each app settings
 [task]
-max_semaphores = 5
-watch_timeout  = 120 # seconds
+max_semaphores  = 5
+wait_after_fire = 15  # seconds. Don't wait if not defined
+watch_timeout   = 120 # seconds
 on_command_failure = "abort" # or "ignore". Default is "abort"
 
 # You can define common task commands for all apps here.

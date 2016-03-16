@@ -16,6 +16,7 @@ module Fireap::Manager
       end
     end
 
+    # @param app [Fireap::Model::Application]
     def collect_app_info(app, ctx: nil)
       Fireap::DataAccess::Kv.get_recurse("#{app.name}/nodes/").each do |data|
         unless %r|#{app.name}/nodes/([^/]+)/([^/\s]+)$|.match(data.key)

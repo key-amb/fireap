@@ -7,7 +7,7 @@ module Fireap
     def initialize(options, ctx)
       @appname  = options['app']
       @appdata  = Fireap::ViewModel::Application.new(options['app'], ctx)
-      @interval = 1
+      @interval = options['interval'].to_i || 2
       @ctx      = ctx
     end
 
@@ -30,7 +30,7 @@ module Fireap
       puts "End."
     end
 
-    def capture(options)
+    def oneshot(options)
       @appdata.refresh
       puts @appdata.render_text
     end

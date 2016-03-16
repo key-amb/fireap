@@ -38,9 +38,13 @@ module Fireap
 
     desc 'monitor', 'Monitor update propagation of target Application'
     option 'app', :required => true, :aliases => 'a'
+    option 'interval', :aliases => 'i'
+    option 'one-shot', :aliases => 'o'
     def monitor
       load_context(options)
-      Fireap::Monitor.new(options, @ctx).monitor(options)
+      monitor = Fireap::Monitor.new(options, @ctx)
+      return monitor.oneshot(options) if options['one-shot']
+      monitor.monitor(options)
     end
 
     private
