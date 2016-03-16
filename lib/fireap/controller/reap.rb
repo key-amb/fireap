@@ -16,24 +16,21 @@ module Fireap::Controller
     @@restore_retry    = 3
 
     attr :ctx, :event, :deploy, :myapp
-    @event  = nil
-    @deploy = nil
-    @myapp  = nil
 
     def initialize(options, ctx: nil)
       @ctx = ctx
     end
 
-    def wait_and_handle
-      if @event = wait()
+    def reap
+      if @event = wait_event()
         @ctx.log.debug @event.to_s
-        handle()
+        handle_event()
       end
     end
 
     private
 
-    def wait
+    def wait_event
       streams = ''
       while ins = $stdin.gets
         streams << ins
@@ -47,7 +44,7 @@ module Fireap::Controller
       ev_data.last.payload
     end
 
-    def handle
+    def handle_event
       return unless prepare()
 
       watch_sec = ctx.config.deploy['watch_timeout'] || @@default_timeout

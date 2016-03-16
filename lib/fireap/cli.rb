@@ -18,14 +18,14 @@ module Fireap
     option 'version', :aliases => 'v'
     def fire
       load_context(options)
-      Fireap::Controller::Fire.new(options, ctx: @ctx).start(options)
+      Fireap::Controller::Fire.new(options, ctx: @ctx).fire(options)
     end
 
     desc 'reap', 'Watch and Reap a deploy event'
     option 'dry-run', :aliases => 'n'
     def reap
       load_context(options)
-      Fireap::Controller::Reap.new(options, ctx: @ctx).wait_and_handle
+      Fireap::Controller::Reap.new(options, ctx: @ctx).reap
     end
 
     desc 'clear', 'Clear deploy lock of target app'

@@ -15,7 +15,7 @@ module Fireap::Controller
       @max_semaphore = @config['max_semaphores'] || @@default_semaphore
     end
 
-    def start(options)
+    def fire(options)
       payload = prepare(options)
       args = [ 'fireap:deploy', payload.to_json ]
       Diplomat::Event.fire(*args)

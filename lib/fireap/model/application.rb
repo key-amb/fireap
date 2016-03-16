@@ -36,7 +36,7 @@ module Fireap::Model
     def to_hash
       {
         name:        @name,
-        version:     @version     ? @version.value : '0',
+        version:     @version     ? @version.value   : '0',
         semaphore:   @semaphore   ? @semaphore.value : '0',
         update_at:   @update_info ? @update_info.updated_at : nil,
         remote_node: @update_info ? @update_info.remote_node : nil,
