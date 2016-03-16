@@ -33,7 +33,7 @@ module Fireap::ViewModel
       <<"EOH"
 ----
 Time: #{Time.now}
-App:  "#{@appname}"
+App:  "#{@name}"
 ----
 EOH
     end
@@ -44,7 +44,7 @@ EOH
 
       @appnodes.sort.each do |an|
         tt.rows << [
-          an.appname,
+          an.nodename,
           an.version,
           an.semaphore,
           an.updated_at,
