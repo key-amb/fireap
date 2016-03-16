@@ -1,11 +1,11 @@
-require 'fireap/application'
+require 'fireap/model/application'
 require 'fireap/manager/node'
 
 module Fireap
   class Monitor
     class Data
       def initialize(app, ctx: nil)
-        @app = Fireap::Application.new(app)
+        @app = Fireap::Model::Application.new(app)
         @ctx = ctx
       end
 

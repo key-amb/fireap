@@ -1,7 +1,7 @@
 require 'base64'
 require 'timeout'
 
-require 'fireap/application'
+require 'fireap/model/application'
 require 'fireap/controller/fire'
 require 'fireap/model/event'
 require 'fireap/model/job'
@@ -65,7 +65,7 @@ module Fireap::Controller
         'app' => @event['app'],
       }, ctx: @ctx )
 
-      @myapp = Fireap::Application.find_or_new(@event['app'], @ctx.mynode)
+      @myapp = Fireap::Model::Application.find_or_new(@event['app'], @ctx.mynode)
 
       if @myapp.version.value == @event['version']
         @ctx.log.info "App #{@event['app']} already updated. version=#{@event['version']} Nothing to do."

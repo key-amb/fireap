@@ -26,12 +26,12 @@ module Fireap::Manager
         ctx.log.debug 'Got kv. %s:%s => %s'%[nodename, propkey, data.value]
 
         node = @nodes[nodename] or ctx.die("Unknown Node! #{nodename}")
-        app  = node.apps[app.name] ||= Fireap::Application.new(app.name, node: node)
+        app  = node.apps[app.name] ||= Fireap::Model::Application.new(app.name, node: node)
         app.set_kv_prop(propkey, data)
       end
       @nodes.each_pair do |name, node|
         unless node.has_app?(app.name)
-          node.apps[app.name] ||= Fireap::Application.new(app.name, node: node)
+          node.apps[app.name] ||= Fireap::Model::Application.new(app.name, node: node)
         end
       end
       ctx.log.debug @nodes.to_s

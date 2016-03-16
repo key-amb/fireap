@@ -1,6 +1,6 @@
 require 'socket'
 
-require 'fireap/application'
+require 'fireap/model/application'
 require 'fireap/data_access/kv'
 
 module Fireap::Controller
@@ -49,7 +49,7 @@ module Fireap::Controller
       end
 
       self.get_lock
-      app = Fireap::Application.find_or_new(@app, @ctx.mynode)
+      app = Fireap::Model::Application.find_or_new(@app, @ctx.mynode)
 
       version = options['version'] || app.version.next_version
       app.semaphore.update(@max_semaphore)

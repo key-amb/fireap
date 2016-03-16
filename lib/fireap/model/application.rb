@@ -1,9 +1,10 @@
 require 'json'
 
-require 'fireap/semaphore'
-require 'fireap/version'
+require 'fireap'
+require 'fireap/data_access/kv'
+require 'fireap/model/kv'
 
-module Fireap
+module Fireap::Model
   class Application
     attr :name, :version, :semaphore, :node, :update_info
 
@@ -45,13 +46,45 @@ module Fireap
     def set_kv_prop(key, kv_data)
       case key
       when 'version'
-        @version = Fireap::Version.new(kv_data.to_hash)
+        @version = Version.new(kv_data.to_hash)
       when 'semaphore'
-        @semaphore = Fireap::Semaphore.new(kv_data.to_hash)
+        @semaphore = Semaphore.new(kv_data.to_hash)
       when 'update_info'
-        @update_info = Fireap::Application::UpdateInfo.new(kv_data.to_hash)
+        @update_info = UpdateInfo.new(kv_data.to_hash)
       else
         raise "Unkwon kv_prop! key=#{key}, data=#{kv_data.to_s}"
+      end
+    end
+
+    class Version < Fireap::Model::Kv
+      def initialize(params)
+        super(params)
+        @value ||= '0'
+      end
+
+      def next_version
+        if %r{(.*\D)?(\d+)(\D*)?}.match(@value.to_s)
+          [$1, $2.to_i + 1, $3].join
+        else
+          @value + '-1'
+        end
+      end
+    end
+
+    class Semaphore < Fireap::Model::Kv
+      def consume(cas: false)
+        if @value.to_i <= 0
+          raise "No more semaphore! val=#{@value}"
+        end
+        self.update(@value.to_i - 1, cas: cas)
+      end
+
+      def restore(cas: false)
+        self.update(@value.to_i + 1, cas: cas)
+      end
+
+      def refetch
+        self.class.new(super.to_hash)
       end
     end
 

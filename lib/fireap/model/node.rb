@@ -1,4 +1,4 @@
-require 'fireap/application'
+require 'fireap/model/application'
 require 'fireap/manager/node'
 require 'fireap/data_access/rest'
 
