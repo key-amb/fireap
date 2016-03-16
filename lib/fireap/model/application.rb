@@ -56,6 +56,23 @@ module Fireap::Model
       end
     end
 
+    def update_properties(version: nil, semaphore: nil, cas: nil, remote_node: nil)
+      updated = 0
+      if version and @version.update(version)
+        updated += 1
+      end
+      if semaphore and @semaphore.update(semaphore, cas: cas)
+        updated += 1
+      end
+      if remote_node
+        ret = @update_info.update({
+          updated_at: Time.now.to_s, remote_node: remote_node
+        }.to_json)
+        updated += 1 if ret
+      end
+      updated
+    end
+
     class Version < Fireap::Model::Kv
       def initialize(params)
         super(params)

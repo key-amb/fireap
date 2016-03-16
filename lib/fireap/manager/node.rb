@@ -37,6 +37,9 @@ module Fireap::Manager
       ctx.log.debug @nodes.to_s
     end
 
+    # @param app [Fireap::Model::Application]
+    # @param version [String]
+    # @return [Hash{String => Fireap::Model::Node}] the key [String] means Node's name
     def select_updated(app, version, ctx: nil)
       updated = {}
       @nodes.each_pair do |name, node|

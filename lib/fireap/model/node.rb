@@ -1,5 +1,5 @@
-require 'fireap/model/application'
 require 'fireap/manager/node'
+require 'fireap/model/application'
 require 'fireap/data_access/rest'
 
 module Fireap::Model

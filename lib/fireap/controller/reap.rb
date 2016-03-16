@@ -2,6 +2,7 @@ require 'base64'
 require 'timeout'
 
 require 'fireap/model/application'
+require 'fireap/model/application_node'
 require 'fireap/controller/fire'
 require 'fireap/model/event'
 require 'fireap/model/job'
@@ -21,38 +22,45 @@ module Fireap::Controller
       @event   = nil
       @appconf = nil
       @myapp   = nil
+      @myappnode = nil
     end
 
     def reap
-      if evt = Fireap::Model::Event.fetch_from_stdin
-        @ctx.log.debug evt.to_s
-        @event = evt.payload
-        handle_event()
-      else
+      unless evt = Fireap::Model::Event.fetch_from_stdin
         @ctx.log.info 'Event not happend yet. Do nothing.'
+        return
+      end
+      @ctx.log.debug evt.to_s
+      @event = evt.payload
+
+      return unless prepare_reap()
+
+      watch_sec = @appconf.watch_timeout || @@default_timeout
+      result = nil
+      Timeout.timeout(watch_sec) do |t|
+        result = update_myapp()
+      end
+
+      if result
+        @ctx.log.info "Update is successful. app=#{@myapp.name}, version=#{@event['version']}"
+      else
+        @ctx.log.error "Update failed! app=#{@myapp.name}, version=#{@event['version']}"
       end
     end
 
     private
 
-    def handle_event
-      return unless prepare()
-
-      watch_sec = @appconf.watch_timeout || @@default_timeout
-      Timeout.timeout(watch_sec) do |t|
-        update_myapp()
-      end
-    end
-
-    def prepare
+    def prepare_reap
       unless @appconf = @config.app_config(@event['app'])
         @ctx.die("Not configured app! #{@event['app']}")
       end
 
-      @myapp = Fireap::Model::Application.find_or_new(@event['app'], @ctx.mynode)
+      @myapp     = Fireap::Model::Application.find_or_new(@event['app'], @ctx.mynode)
+      @myappnode = Fireap::Model::ApplicationNode.new(@myapp, @ctx.mynode, ctx: @ctx)
 
       if @myapp.version.value == @event['version']
-        @ctx.log.info "App #{@event['app']} already updated. version=#{@event['version']} Nothing to do."
+        @ctx.log.info(
+          "App #{@event['app']} already updated. version=#{@event['version']} Nothing to do.")
         return unless @ctx.develop_mode?
       end
 
@@ -66,32 +74,24 @@ module Fireap::Controller
 
       updated = false
       while !updated
-        ntable = Fireap::Manager::Node.instance
-        ntable.collect_app_info(@myapp, ctx: @ctx)
 
-        candidates = ntable.select_updated(@myapp, version, ctx: @ctx)
+        candidates = @myappnode.find_updated_nodes(version)
         if candidates.empty?
           @ctx.die("Can't fetch updated app from any node! app=#{appname}, version=#{version}")
         end
 
-        candidates.each_pair do |host, node|
-          if mynode.name == host
-            @ctx.log.info "Candidate node is myself. #{host} Skip."
-            next unless @ctx.develop_mode?
-          end
-
-          nodeapp = node.apps[appname]
-          unless nodeapp.semaphore.consume(cas: true)
+        candidates.shuffle.each do |appnode|
+          unless appnode.app.semaphore.consume(cas: true)
             @ctx.log.debug "Can't get semaphore from #{host}; app=#{appname}"
             next
           end
 
           begin
-            pull_update(node)
+            pull_update(appnode.node)
             updated = true
-            break
+            return updated
           ensure
-            unless restore_semaphore(nodeapp.semaphore)
+            unless restore_semaphore(appnode.app.semaphore)
               @ctx.die("Failed to restore semaphore! app=#{appname}, node=#{host}")
             end
           end
@@ -99,6 +99,7 @@ module Fireap::Controller
 
         sleep @@loop_interval
       end
+      updated
     end
 
     def pull_update(node)
@@ -106,8 +107,8 @@ module Fireap::Controller
       new_version = @event['version']
 
       @ctx.log.debug "Start pulling update #{appname} from #{node.name} toward #{new_version}."
-      executor = Fireap::Model::Job.new(ctx: @ctx)
-      @results = executor.run_commands(app: @myapp, remote: node)
+      job = Fireap::Model::Job.new(ctx: @ctx)
+      @results = job.run_commands(app: @myapp, remote: node)
 
       failed  = @results.select { |r| r.is_failed?  }
       ignored = failed.select   { |r| r.is_ignored? }
@@ -123,12 +124,14 @@ module Fireap::Controller
       end
 
       # Update succeeded. So set node's version and semaphore
-      @myapp.semaphore.update(@appconf.max_semaphores)
-      @myapp.version.update(new_version)
-      @myapp.update_info.update({
-        updated_at:  Time.now.to_s,
+      cnt = @myapp.update_properties(
+        version: new_version,
+        semaphore: @appconf.max_semaphores,
         remote_node: node.name,
-      }.to_json)
+      )
+      unless cnt == 3
+        @ctx.log.error "Update some properties Failed! updated count = #{cnt}. Should be 3."
+      end
       @ctx.log.info "[#{@ctx.mynode.name}] Updated app #{appname} to version #{new_version} ."
     end
 

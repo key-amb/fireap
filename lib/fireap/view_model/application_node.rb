@@ -6,7 +6,6 @@ module Fireap::ViewModel
 
     # @param app  [Fireap::Model::Application]
     # @param node [Fireap::Model::Node]
-
     def initialize(app, node)
       @app  = app
       @node = node
