@@ -43,7 +43,7 @@ module Fireap
     private
 
     def logger(config)
-      dest   = config['file']   || STDOUT
+      dest   = (STDOUT.tty? or ! config['file']) ? STDOUT : config['file']
       rotate = config['rotate'] || 0
       level  = config['level']  || 'INFO'
       @log   = Logger.new(dest, rotate)
