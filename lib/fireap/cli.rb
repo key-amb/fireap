@@ -13,7 +13,7 @@ module Fireap
     class_option 'config',  :aliases => 'c'
     class_option 'debug',   :aliases => 'd'
 
-    desc 'fire', 'Fire deploy event for target Application'
+    desc 'fire', 'Fire an update Event for target Application'
     option 'app', :required => true, :aliases => 'a'
     option 'version', :aliases => 'v'
     def fire
@@ -21,14 +21,14 @@ module Fireap
       Fireap::Controller::Fire.new(options, ctx: @ctx).fire(options)
     end
 
-    desc 'reap', 'Watch and Reap a deploy event'
+    desc 'reap', 'Watch and Reap a fired event'
     option 'dry-run', :aliases => 'n'
     def reap
       load_context(options)
       Fireap::Controller::Reap.new(options, ctx: @ctx).reap
     end
 
-    desc 'clear', 'Clear deploy lock of target app'
+    desc 'clear', 'Clear Fire Lock for target Application'
     option 'app', :required => true, :aliases => 'a'
     def clear
       load_context(options)
@@ -36,7 +36,7 @@ module Fireap
       puts "Successfully cleared lock for app=#{options['app']}."
     end
 
-    desc 'monitor', 'Monitor deploy propagation of target app'
+    desc 'monitor', 'Monitor update propagation of target Application'
     option 'app', :required => true, :aliases => 'a'
     def monitor
       load_context(options)

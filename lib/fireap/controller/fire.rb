@@ -11,22 +11,22 @@ module Fireap::Controller
     def initialize(options, ctx: nil)
       @app    = options['app']
       @ctx    = ctx
-      @config = ctx.config.deploy
+      @config = ctx.config.task
       @max_semaphore = @config['max_semaphores'] || @@default_semaphore
     end
 
     def fire(options)
       payload = prepare(options)
-      args = [ 'fireap:deploy', payload.to_json ]
+      args = [ Fireap::EVENT_NAME, payload.to_json ]
       Diplomat::Event.fire(*args)
       self.release_lock
-      ctx.log.info "Deploy event fired. data = #{payload.to_s}"
+      ctx.log.info "Event Fired! Data = #{payload.to_s}"
     end
 
     def get_lock
       @lock_key ||= "#{@app}/lock"
       if Fireap::DataAccess::Kv.get(@lock_key, :return).length > 0
-        @ctx.die("#{@app} is already locked! Probably deploy is ongoing.")
+        @ctx.die("Task #{@app} is already locked! Maybe update is ongoing. Please Check!")
       end
       unless Fireap::DataAccess::Kv.put(@lock_key, Socket.gethostname)
         @ctx.die("Failed to put kv! key=#{@app}")
@@ -43,7 +43,7 @@ module Fireap::Controller
     private
 
     def prepare(options)
-      config  = ctx.config.deploy
+      config  = ctx.config.task
       unless config['apps'][@app]
         ctx.die("Not configured app! #{@app}")
       end

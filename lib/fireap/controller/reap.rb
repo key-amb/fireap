@@ -15,7 +15,7 @@ module Fireap::Controller
     @@restore_interval = 3
     @@restore_retry    = 3
 
-    attr :ctx, :event, :deploy, :myapp
+    attr :ctx, :event, :task, :myapp
 
     def initialize(options, ctx: nil)
       @ctx = ctx
@@ -47,18 +47,18 @@ module Fireap::Controller
     def handle_event
       return unless prepare()
 
-      watch_sec = ctx.config.deploy['watch_timeout'] || @@default_timeout
+      watch_sec = ctx.config.task['watch_timeout'] || @@default_timeout
       Timeout.timeout(watch_sec) do |t|
         update_myapp()
       end
     end
 
     def prepare
-      unless @ctx.config.deploy['apps'][@event['app']]
+      unless @ctx.config.task['apps'][@event['app']]
         @ctx.die("Not configured app! #{@event['app']}")
       end
 
-      @deploy = Fireap::Controller::Fire.new({
+      @task = Fireap::Controller::Fire.new({
         'app' => @event['app'],
       }, ctx: @ctx )
 
@@ -136,7 +136,7 @@ module Fireap::Controller
       end
 
       # Update succeeded. So set node's version and semaphore
-      @myapp.semaphore.update(deploy.max_semaphore)
+      @myapp.semaphore.update(task.max_semaphore)
       @myapp.version.update(new_version)
       @myapp.update_info.update({
         updated_at:  Time.now.to_s,

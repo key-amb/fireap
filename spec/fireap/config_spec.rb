@@ -53,27 +53,27 @@ EOS
     end
   end
 
-  describe 'App Deploy Settings' do
+  describe 'App Task Settings' do
     tester = TestFireapConfig.new(<<"EOS")
-## Common Deploy Settings
-[deploy]
+## Common Task Settings
+[task]
 max_semaphores     = 5
 on_command_failure = "abort"
 before_commands = [ "common before" ]
 exec_commands   = [ "common exec" ]
 after_commands  = [ "common after" ]
 
-[deploy.apps.foo]
+[task.apps.foo]
 max_semaphores     = 3
 on_command_failure = "ignore"
 exec_commands   = [ "foo exec1", "foo exec2" ]
 after_commands  = [ "foo after" ]
 
-[deploy.apps.bar]
+[task.apps.bar]
 EOS
 
     describe 'App = "foo"' do
-      parsed = tester.parsed['deploy']
+      parsed = tester.parsed['task']
       appc   = tester.config.app_config('foo')
 
       %w[ max_semaphores on_command_failure ].each do |key|
@@ -100,7 +100,7 @@ EOS
     end
 
     describe 'App = "bar"' do
-      parsed = tester.parsed['deploy']
+      parsed = tester.parsed['task']
       appc   = tester.config.app_config('bar')
 
       %w[ max_semaphores on_command_failure ].each do |key|

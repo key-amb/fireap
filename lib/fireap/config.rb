@@ -27,8 +27,8 @@ module Fireap
     def app_config(app)
       require 'pp'
       @appc[app] ||= proc {
-        base = self.deploy.select { |k,v| @@app_props.include?(k) }
-        appc = self.deploy['apps'][app]
+        base = self.task.select { |k,v| @@app_props.include?(k) }
+        appc = self.task['apps'][app]
         conf = base.merge(appc)
         conf['commands'] = []
         %w(before exec after).each do |phase|

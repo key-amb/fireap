@@ -1,5 +1,7 @@
 module Fireap
-  NAME = 'fireap'
+  NAME       = 'fireap'
+  EVENT_NAME = 'FIREAP:DEPLOY'
+
   module Kv
     PREFIX = Fireap::NAME + '/'
   end
