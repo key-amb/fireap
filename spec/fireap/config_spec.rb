@@ -58,6 +58,7 @@ EOS
 ## Common Task Settings
 [task]
 max_semaphores     = 5
+wait_after_fire    = 10
 watch_timeout      = 120
 on_command_failure = "abort"
 before_commands = [ "common before" ]
@@ -110,7 +111,7 @@ EOS
       parsed = tester.parsed['task']
       appc   = tester.config.app_config('bar')
 
-      %w[ max_semaphores watch_timeout on_command_failure ].each do |key|
+      %w[ max_semaphores wait_after_fire watch_timeout on_command_failure ].each do |key|
         it "#{key} - common setting is chosen" do
           expect( appc.send(key) ).to eq parsed[key]
         end

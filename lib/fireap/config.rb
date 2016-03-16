@@ -4,7 +4,7 @@ require 'toml'
 module Fireap
   class Config
     @@app_props = %w[
-      max_semaphores watch_timeout on_command_failure
+      max_semaphores wait_after_fire watch_timeout on_command_failure
       before_commands exec_commands after_commands
     ]
     @me   = nil
@@ -51,7 +51,7 @@ module Fireap
     end
 
     class App
-      attr :max_semaphores, :watch_timeout, :on_command_failure, :commands
+      attr :max_semaphores, :wait_after_fire, :watch_timeout, :on_command_failure, :commands
 
       def initialize(stash)
         stash.each_pair do |k,v|
