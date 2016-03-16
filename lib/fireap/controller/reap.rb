@@ -24,27 +24,16 @@ module Fireap::Controller
     end
 
     def reap
-      if @event = wait_event()
-        @ctx.log.debug @event.to_s
+      if evt = Fireap::Model::Event.fetch_from_stdin
+        @ctx.log.debug evt.to_s
+        @event = evt.payload
         handle_event()
+      else
+        @ctx.log.info 'Event not happend yet. Do nothing.'
       end
     end
 
     private
-
-    def wait_event
-      streams = ''
-      while ins = $stdin.gets
-        streams << ins
-      end
-
-      ev_data = Fireap::Model::Event.create_by_streams(streams)
-      unless ev_data.length > 0
-        @ctx.log.debug 'Event not happend yet.'
-        return
-      end
-      ev_data.last.payload
-    end
 
     def handle_event
       return unless prepare()

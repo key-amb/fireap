@@ -1,6 +1,7 @@
 require 'base64'
 
 require 'fireap/model/kv'
+require 'fireap/util/string'
 
 module Fireap::Data
   class Kv

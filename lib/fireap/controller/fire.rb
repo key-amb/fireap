@@ -1,8 +1,8 @@
-require 'diplomat'
 require 'socket'
 
 require 'fireap'
 require 'fireap/model/application'
+require 'fireap/model/event'
 require 'fireap/data_access/kv'
 
 module Fireap::Controller
@@ -19,8 +19,7 @@ module Fireap::Controller
       payload = prepare_event(options)
       return unless payload
 
-      args = [ Fireap::EVENT_NAME, payload.to_json ]
-      Diplomat::Event.fire(*args)
+      Fireap::Model::Event.new(payload: payload).fire
       self.release_lock
       @ctx.log.info "Event Fired! Data = #{payload.to_s}"
     end
@@ -64,7 +63,8 @@ EOS
       version = options['version'] || app.version.next_version
       app.semaphore.update(@appconf.max_semaphores)
       app.version.update(version)
-      { app: @appname, version: version }
+
+      payload = { app: @appname, version: version }
     end
   end
 end
