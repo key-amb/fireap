@@ -18,21 +18,21 @@ module Fireap
     option 'version', :aliases => 'v'
     def fire
       load_context(options)
-      Fireap::Controller::Fire.new(options, ctx: @ctx).fire(options)
+      Fireap::Controller::Fire.new(options, @ctx).fire(options)
     end
 
     desc 'reap', 'Watch and Reap a fired event'
     option 'dry-run', :aliases => 'n'
     def reap
       load_context(options)
-      Fireap::Controller::Reap.new(options, ctx: @ctx).reap
+      Fireap::Controller::Reap.new(options, @ctx).reap
     end
 
     desc 'clear', 'Clear Fire Lock for target Application'
     option 'app', :required => true, :aliases => 'a'
     def clear
       load_context(options)
-      Fireap::Controller::Fire.new(options, ctx: @ctx).release_lock
+      Fireap::Controller::Fire.new(options, @ctx).release_lock
       puts "Successfully cleared lock for app=#{options['app']}."
     end
 
@@ -40,7 +40,7 @@ module Fireap
     option 'app', :required => true, :aliases => 'a'
     def monitor
       load_context(options)
-      Fireap::Monitor.new(options, ctx: @ctx).monitor(options)
+      Fireap::Monitor.new(options, @ctx).monitor(options)
     end
 
     private

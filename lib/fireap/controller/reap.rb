@@ -17,8 +17,9 @@ module Fireap::Controller
 
     attr :ctx, :event, :task, :myapp
 
-    def initialize(options, ctx: nil)
-      @ctx = ctx
+    def initialize(options, ctx)
+      @ctx    = ctx
+      @config = ctx.config
     end
 
     def reap
@@ -47,14 +48,14 @@ module Fireap::Controller
     def handle_event
       return unless prepare()
 
-      watch_sec = ctx.config.task['watch_timeout'] || @@default_timeout
+      watch_sec = @config.task['watch_timeout'] || @@default_timeout
       Timeout.timeout(watch_sec) do |t|
         update_myapp()
       end
     end
 
     def prepare
-      unless @ctx.config.task['apps'][@event['app']]
+      unless @config.task['apps'][@event['app']]
         @ctx.die("Not configured app! #{@event['app']}")
       end
 
