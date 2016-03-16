@@ -15,8 +15,8 @@ module Fireap::ViewModel
       @appname = app.name
       @version = app.version ? app.version.value : '-'
       @semaphore   = app.semaphore   ? app.semaphore.value : '-'
-      @updated_at  = app.update_info ? app.update_info.updated_at : '-'
-      @remote_node = app.update_info ? pp.update_info.remote_node : '-'
+      @updated_at  = app.update_info ? app.update_info.updated_at  : '-'
+      @remote_node = app.update_info ? app.update_info.remote_node : '-'
     end
 
     #--

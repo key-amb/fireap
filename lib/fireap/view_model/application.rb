@@ -47,7 +47,7 @@ EOH
           an.appname,
           an.version,
           an.semaphore,
-          an.update_at,
+          an.updated_at,
           an.remote_node,
         ]
       end
