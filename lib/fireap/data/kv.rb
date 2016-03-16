@@ -9,11 +9,11 @@ module Fireap::Data
       @me = kv
     end
 
-    def to_data
+    def to_model
       data = {}
       @me.each do |key, val|
-        if key == 'Value'
-          data[key.to_snakecase] = val ? Base64.decode64(val) : val
+        if key == 'Value' && val
+          data[key.to_snakecase] = Base64.decode64(val)
         else
           data[key.to_snakecase] = val
         end

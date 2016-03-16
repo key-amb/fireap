@@ -19,7 +19,7 @@ module Fireap::DataAccess
       unless resp = Fireap::DataAccess::Rest.get(path)
         return false
       end
-      Fireap::Data::Kv.new(resp.shift).to_data
+      Fireap::Data::Kv.new(resp.shift).to_model
     end
 
     # Diplomat::Kv#get with option (:recurse => 1) doesn't work.
@@ -28,7 +28,7 @@ module Fireap::DataAccess
       unless resp = Fireap::DataAccess::Rest.get("/kv/#{@@prefix}" + key, params: ['recurse=1'])
         return []
       end
-      resp.map { |kv| Fireap::Data::Kv.new(kv).to_data }
+      resp.map { |kv| Fireap::Data::Kv.new(kv).to_model }
     end
 
     def put(key, value, options=nil)

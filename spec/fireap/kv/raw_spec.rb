@@ -8,7 +8,7 @@ kv = {
 }
 
 raw  = Fireap::Data::Kv.new(kv)
-data = raw.to_data
+data = raw.to_model
 
 describe 'New Kv raw/data' do
   it 'data is a Fireap::Model::Kv' do
