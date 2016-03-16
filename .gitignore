@@ -1,3 +1,5 @@
 *.swp
-tmp/
-.bundle
+/tmp/
+/.bundle/
+/.yardoc/
+/doc/

@@ -7,32 +7,32 @@ level  = "INFO"  # from Ruby Logger::LEVEL
 rotate = "daily" # from Ruby Logger shift_age
 # file = path/to/logfile
 
-## Common Deploy Settings
-##   - Can be overridden by each target settings
-[deploy]
+## Common Task Settings
+# Can be overridden by each app settings
+[task]
 max_semaphores = 5
 watch_timeout  = 120 # seconds
 on_command_failure = "abort" # or "ignore". Default is "abort"
 
-# You can define common deploy commands for all apps here.
+# You can define common task commands for all apps here.
 # Available variables for command formats:
 #   - @app            ... Target App's Name
 #   - @remote.name    ... Node Name in Consul Cluster
 #   - @remote.address ... Node's Ipaddress in Consul Cluster
 #   - ENV             ... Given Environment Vars for Watch Command
 before_commands = [
-    "echo Deploy <%= @app %> Started.",
+    "echo Task <%= @app %> Started.",
 ]
 # exec_commands = [] # Probably different for each apps.
 after_commands = [
-    "echo Deploy <%= @app %> Ended.",
+    "echo Task <%= @app %> Ended.",
 ]
 
 # Belows are not implemented yet:
 # command_timeout = 60
 
-## Settings for each Deploy Target
-[deploy.apps.foo]
+## Settings for each Task target Application
+[task.apps.foo]
 # max_semaphores  = 3
 # before_commands = []
 exec_commands = [
@@ -44,7 +44,7 @@ exec_commands = [
 # service = "foo"
 # tag = "bar"
 
-[deploy.apps.bar]
+[task.apps.bar]
 on_command_failure = "ignore"
 exec_commands = [
     "date '+%FT%T' > /tmp/bar.updated_at.txt",

@@ -1,6 +1,6 @@
-require 'fireap/kv/data'
+require 'fireap/model/kv'
 
-kv1 = Fireap::Kv::Data.new(
+kv1 = Fireap::Model::Kv.new(
   key: 'version',
   value: 'v0.1',
   modify_index: '1',

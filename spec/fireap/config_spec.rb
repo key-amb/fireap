@@ -53,31 +53,38 @@ EOS
     end
   end
 
-  describe 'App Deploy Settings' do
+  describe 'App Task Settings' do
     tester = TestFireapConfig.new(<<"EOS")
-## Common Deploy Settings
-[deploy]
+## Common Task Settings
+[task]
 max_semaphores     = 5
+watch_timeout      = 120
 on_command_failure = "abort"
 before_commands = [ "common before" ]
 exec_commands   = [ "common exec" ]
 after_commands  = [ "common after" ]
 
-[deploy.apps.foo]
+[task.apps.foo]
 max_semaphores     = 3
 on_command_failure = "ignore"
 exec_commands   = [ "foo exec1", "foo exec2" ]
 after_commands  = [ "foo after" ]
 
-[deploy.apps.bar]
+[task.apps.bar]
 EOS
 
+    describe 'Not configured App' do
+      it 'return nil' do
+        expect( tester.config.app_config('baz') ).to be nil
+      end
+    end
+
     describe 'App = "foo"' do
-      parsed = tester.parsed['deploy']
+      parsed = tester.parsed['task']
       appc   = tester.config.app_config('foo')
 
       %w[ max_semaphores on_command_failure ].each do |key|
-        it key do
+        it "#{key} is overridden" do
           expect( appc.send(key) ).to eq parsed['apps']['foo'][key]
         end
       end
@@ -100,11 +107,11 @@ EOS
     end
 
     describe 'App = "bar"' do
-      parsed = tester.parsed['deploy']
+      parsed = tester.parsed['task']
       appc   = tester.config.app_config('bar')
 
-      %w[ max_semaphores on_command_failure ].each do |key|
-        it key do
+      %w[ max_semaphores watch_timeout on_command_failure ].each do |key|
+        it "#{key} - common setting is chosen" do
           expect( appc.send(key) ).to eq parsed[key]
         end
       end

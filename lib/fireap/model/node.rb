@@ -1,8 +1,8 @@
-require 'fireap/application'
-require 'fireap/nodetable'
-require 'fireap/rest'
+require 'fireap/manager/node'
+require 'fireap/model/application'
+require 'fireap/data_access/rest'
 
-module Fireap
+module Fireap::Model
   class Node
     attr :name, :address, :apps
 
@@ -13,7 +13,7 @@ module Fireap
     end
 
     def self.query_agent_self
-      resp = Fireap::Rest.get('/agent/self')
+      resp = Fireap::DataAccess::Rest.get('/agent/self')
       new(resp['Member']['Name'], resp['Member']['Address'])
     end
 

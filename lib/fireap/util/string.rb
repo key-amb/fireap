@@ -1,6 +1,6 @@
 # Extends class String
 class String
-  def to_snake
+  def to_snakecase
     str = self
     if /^([A-Z]+)/.match(str)
       str = $&.downcase + $'

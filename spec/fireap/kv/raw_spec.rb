@@ -1,4 +1,4 @@
-require 'fireap/kv/raw'
+require 'fireap/data/kv'
 
 require 'base64'
 
@@ -7,12 +7,12 @@ kv = {
   'Value' => Base64.encode64('v0.1.0'),
 }
 
-raw  = Fireap::Kv::Raw.new(kv)
-data = raw.to_data
+raw  = Fireap::Data::Kv.new(kv)
+data = raw.to_model
 
 describe 'New Kv raw/data' do
-  it 'data is a Fireap::Kv::Data' do
-    expect(data).to be_an_instance_of(Fireap::Kv::Data)
+  it 'data is a Fireap::Model::Kv' do
+    expect(data).to be_an_instance_of(Fireap::Model::Kv)
   end
   it 'data.value is decoded' do
     expect(data.value).to eq 'v0.1.0'
