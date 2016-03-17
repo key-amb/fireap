@@ -1,21 +1,39 @@
+require 'data/validator'
 require 'json'
 
 require 'fireap'
 require 'fireap/data_access/kv'
 require 'fireap/model/kv'
+require 'fireap/model/node'
 
 module Fireap::Model
+
+  # A data container of an Application and related information.
+  # @todo Ideally it should belong to a Node object. So this object should not
+  #  include @node
+  #  If you want to treat Application and Node, use Fireap::Mode::ApplicationNode
+  # @see Fireap::Model::ApplicationNode
+
   class Application
     attr :name, :version, :semaphore, :node, :update_info
 
-    def initialize(name, version: nil, semaphore: nil, node: nil)
-      @name      = name
-      @version   = version
-      @semaphore = semaphore
-      @node      = node
+    def initialize(name, *option)
+      args = { name: name }
+      args.merge!(*option) if ! option.empty?
+      params = Data::Validator.new(
+        name:      { isa: String },
+        version:   { isa: Version,             default: nil },
+        semaphore: { isa: Semaphore,           default: nil },
+        node:      { isa: Fireap::Model::Node, default: nil },
+      ).validate(args)
+
+      params.each_pair do |key, val|
+        instance_variable_set("@#{key}", val)
+      end
       @update_info = nil
     end
 
+    # @todo Move this to Fireap::Model::ApplicationNode
     def self.find_or_new(name, node)
       app     = new(name, node: node)
       path    = "#{name}/nodes/#{node.name}"

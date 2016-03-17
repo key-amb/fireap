@@ -1,6 +1,12 @@
 require 'fireap/model/command'
 
 module Fireap::Model
+
+  # A Job is defined by set of Commands.
+  # @see Fireap::Model::Command
+  # @todo Currently this class suppose that Fireap::Context object is given.
+  #  It should be more isolative from context.
+
   class Job
     attr :ctx
     def initialize(ctx: nil)
