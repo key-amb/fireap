@@ -84,7 +84,7 @@ module Fireap::Controller
 
         candidates.shuffle.each do |appnode|
           unless appnode.app.semaphore.consume(cas: true)
-            @ctx.log.debug "Can't get semaphore from #{host}; app=#{appname}"
+            @ctx.log.debug "Can't get semaphore from #{appnode.node.name}; app=#{appname}"
             next
           end
 
