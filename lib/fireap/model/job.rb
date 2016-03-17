@@ -1,7 +1,7 @@
-require 'fireap/command'
+require 'fireap/model/command'
 
-module Fireap
-  class Executor
+module Fireap::Model
+  class Job
     attr :ctx
     def initialize(ctx: nil)
       @ctx = ctx
@@ -14,7 +14,7 @@ module Fireap
 
       @results = []
       formats.each do |fmt|
-        command = Fireap::Command.new(
+        command = Fireap::Model::Command.new(
           app:    app.name,
           format: fmt,
           remote: remote,

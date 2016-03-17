@@ -1,7 +1,7 @@
 require 'erb'
 require 'open3'
 
-module Fireap
+module Fireap::Model
   class Command
     attr :format, :app, :remote, :config, :ctx
 

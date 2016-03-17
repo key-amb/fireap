@@ -4,7 +4,8 @@ require 'toml'
 module Fireap
   class Config
     @@app_props = %w[
-      max_semaphores on_command_failure before_commands exec_commands after_commands
+      max_semaphores wait_after_fire watch_timeout on_command_failure
+      before_commands exec_commands after_commands
     ]
     @me   = nil
     @appc = nil
@@ -24,11 +25,12 @@ module Fireap
       end
     end
 
-    def app_config(app)
-      require 'pp'
-      @appc[app] ||= proc {
-        base = self.deploy.select { |k,v| @@app_props.include?(k) }
-        appc = self.deploy['apps'][app]
+    def app_config(appname)
+      @appc[appname] ||= proc {
+        unless appc = self.task['apps'][appname]
+          return nil # Not configured
+        end
+        base = self.task.select { |k,v| @@app_props.include?(k) }
         conf = base.merge(appc)
         conf['commands'] = []
         %w(before exec after).each do |phase|
@@ -49,7 +51,7 @@ module Fireap
     end
 
     class App
-      attr :max_semaphores, :on_command_failure, :commands
+      attr :max_semaphores, :wait_after_fire, :watch_timeout, :on_command_failure, :commands
 
       def initialize(stash)
         stash.each_pair do |k,v|

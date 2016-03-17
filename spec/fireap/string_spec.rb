@@ -1,6 +1,6 @@
-require 'fireap/string'
+require 'fireap/util/string'
 
-describe 'to_snake - string converter' do
+describe 'to_snakecase - string converter' do
   {
     'ID'        => 'id',
     'Key'       => 'key',
@@ -8,7 +8,7 @@ describe 'to_snake - string converter' do
     'FooBar'    => 'foo_bar',
   }.each_pair do |k,v|
     it "#{k} => #{v}" do
-      expect(k.to_snake).to eq(v)
+      expect(k.to_snakecase).to eq(v)
     end
   end
 end

@@ -1,4 +1,4 @@
-require 'fireap/version'
+require 'fireap/model/application'
 
 ver2next = {
   '1' => '2',
@@ -11,7 +11,7 @@ ver2next = {
 describe 'Automatically determine next version' do
   ver2next.each_pair do |pre,nxt|
     it "#{pre} => #{nxt}" do
-      ver = Fireap::Version.new(value: pre)
+      ver = Fireap::Model::Application::Version.new(value: pre)
       expect(ver.next_version).to eq nxt
     end
   end
