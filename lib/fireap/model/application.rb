@@ -7,6 +7,13 @@ require 'fireap/model/kv'
 require 'fireap/model/node'
 
 module Fireap::Model
+
+  # A data container of an Application and related information.
+  # @todo Ideally it should belong to a Node object. So this object should not
+  #  include @node
+  #  If you want to treat Application and Node, use Fireap::Mode::ApplicationNode
+  # @see Fireap::Model::ApplicationNode
+
   class Application
     attr :name, :version, :semaphore, :node, :update_info
 
@@ -26,6 +33,7 @@ module Fireap::Model
       @update_info = nil
     end
 
+    # @todo Move this to Fireap::Model::ApplicationNode
     def self.find_or_new(name, node)
       app     = new(name, node: node)
       path    = "#{name}/nodes/#{node.name}"
