@@ -3,6 +3,7 @@ GEM
   specs:
     citrus (3.0.2)
     curses (1.0.1)
+    data-validator (1.0.3)
     diff-lcs (1.2.5)
     diplomat (0.15.0)
       faraday (~> 0.9)
@@ -35,9 +36,13 @@ PLATFORMS
 
 DEPENDENCIES
   curses (~> 1.0)
+  data-validator (~> 1.0)
   diplomat (~> 0.15.0)
   rake (~> 10.4)
   rspec (~> 3.4)
   text-table (~> 1.2)
   thor (~> 0.19)
   toml-rb (~> 0.3.10)
+
+BUNDLED WITH
+   1.11.2
