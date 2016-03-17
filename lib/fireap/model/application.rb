@@ -34,12 +34,18 @@ module Fireap::Model
     end
 
     # @todo Move this to Fireap::Model::ApplicationNode
-    def self.find_or_new(name, node)
+    def self.find_or_new(name, node, ctx: nil)
       app     = new(name, node: node)
-      path    = "#{name}/nodes/#{node.name}"
+      path    = "#{name}/nodes/#{node.name}/"
       kv_data = Fireap::DataAccess::Kv.get_recurse(path)
       if kv_data.length > 0
-        kv_data.each { |kv| app.set_kv_prop(File.basename(kv.key), kv) }
+        kv_data.each do |kv|
+          if kv.key =~ %r|#{name}/nodes/#{node.name}/([\w]+)|
+            app.set_kv_prop($1, kv)
+          else
+            ctx.log.error "Got key doesn't match! Got=#{kv.key}, Expected Node=#{node.name}"
+          end
+        end
       end
       %w[version semaphore update_info].each do |key|
         unless app.instance_variable_get("@#{key}")

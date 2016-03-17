@@ -55,7 +55,9 @@ module Fireap::Controller
         @ctx.die("Not configured app! #{@event['app']}")
       end
 
-      @myapp     = Fireap::Model::Application.find_or_new(@event['app'], @ctx.mynode)
+      @myapp = Fireap::Model::Application.find_or_new(
+        @event['app'], @ctx.mynode, ctx: @ctx
+      )
       @myappnode = Fireap::Model::ApplicationNode.new(@myapp, @ctx.mynode, ctx: @ctx)
 
       if @myapp.version.value == @event['version']
