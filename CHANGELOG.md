@@ -1,3 +1,12 @@
+## 0.1.2 (2016/3/18)
+
+Change:
+
+- General:
+  - Write log to logfile in addtion to STDIN when logfile is configured.
+- In `monitor` command:
+  - Suppress logging on continuous monitoring mode.
+
 ## 0.1.1 (2016/3/18)
 
 Fix:
