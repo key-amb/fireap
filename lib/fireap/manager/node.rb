@@ -44,7 +44,6 @@ module Fireap::Manager
           node.apps[app.name] ||= Fireap::Model::Application.new(app.name, node: node)
         end
       end
-      ctx.log.debug @nodes.to_s
     end
 
     # @param app [Fireap::Model::Application]
