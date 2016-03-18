@@ -12,15 +12,16 @@ And tasks will be executed in propagative way.
 Task propagation time takes _O(log N)_ in theory; as _N_ means node number in
 cluster.
 
-So this tool can shorten the time of tasks which take _O(N)_ time in system of large number
-of nodes.  
+So this tool can shorten the time of tasks which take _O(N)_ time in system of
+large number of nodes.  
 Typical usecase is software deployment.
 
 The name **fireap** comes from _"fire"_ and _"reap"_.
 
 ## Benchmark
 
-Here is a benchmark result comparing **fireap** against [GNU Parallel](http://www.gnu.org/software/parallel/).
+Here is a benchmark result comparing **fireap** against
+[GNU Parallel](http://www.gnu.org/software/parallel/).
 
 |      | GNU Parallel | fireap    |
 | ---- | ------------:|----------:|
@@ -29,11 +30,13 @@ Here is a benchmark result comparing **fireap** against [GNU Parallel](http://ww
 | sys  |    0m04.241s | 0m00.046s |
 
 The job executed here is a directory sync operation by `rsync` command which
-contains a thousand of files up to total 12MB size through 100 t2.micron instances on AWS EC2.
+contains a thousand of files up to total 12MB size, through 100 t2.micro instances
+on AWS EC2.
 
 Concurrency numbers of both _GNU Parallel_ and _fireap_ is 5 in this benchmark.
 
-In _fireap_, the word _"concurrency"_ means the maximum concurrent number that one node can be "pulled" by other nodes.  
+In _fireap_, the word _"concurrency"_ means the maximum concurrent number that
+one node can be "pulled" by other nodes.  
 You will grasp the concept by going under part of this document.
 
 ## About Consul
