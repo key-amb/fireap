@@ -1,18 +1,30 @@
-require 'logger'
+require 'data/validator'
+
+require 'fireap/logger'
+require 'fireap/util/validator'
 
 module Fireap
   class Context
+    include Fireap::Util::Validator
+
     attr :config, :log
     @node = nil # Fireap::Model::Node of running host
     @mode = 'production'
 
-    def initialize(config_path: nil, dry_run: nil, develop_mode: nil)
+    def initialize(*args)
+      params = ::Data::Validator.new(
+        config_path:  { isa: [String, NilClass], default: nil },
+        dry_run:      { isa: BOOL_FAMILY, default: nil },
+        suppress_log: { isa: BOOL_FAMILY, default: nil },
+        develop_mode: { isa: BOOL_FAMILY, default: nil },
+      ).validate(*args)
+
       cfg = {}
-      cfg[:path] = config_path if config_path
+      cfg[:path] = params[:config_path] if params[:config_path]
       @config    = Fireap::Config.new(cfg)
-      @dry_run   = dry_run
-      @mode      = 'develop' if develop_mode
-      @log       = logger(@config.log)
+      @dry_run   = params[:dry_run]
+      @mode      = 'develop' if params[:develop_mode]
+      @log       = logger(@config.log, params[:suppress_log])
     end
 
     def die(message, level=Logger::ERROR, err=Fireap::Error)
@@ -42,16 +54,13 @@ module Fireap
 
     private
 
-    def logger(config)
-      dest   = (STDOUT.tty? or ! config['file']) ? STDOUT : config['file']
-      rotate = config['rotate'] || 0
-      level  = config['level']  || 'INFO'
-      @log   = Logger.new(dest, rotate)
-      @log.level = Object.const_get("Logger::#{level}")
-      @log.formatter = proc do |level, date, prog, msg|
-        "#{date} [#{level}] #{msg} -- #{prog}\n"
+    def logger(config, suppress)
+      outs = []
+      unless suppress
+        outs.push(STDOUT) if STDOUT.tty?
+        outs.push(config['file']) if config['file']
       end
-      @log
+      Fireap::Logger.new(outs, rotate: config['rotate'], level: config['level'])
     end
   end
 end
