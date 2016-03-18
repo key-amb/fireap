@@ -41,7 +41,9 @@ module Fireap
     option 'interval', :type => :numeric, :aliases => 'i'
     option 'one-shot', :type => :boolean, :aliases => 'o'
     def monitor
-      load_context(options)
+      opts = options.dup
+      opts['suppress-log'] = true unless options['one-shot']
+      load_context(opts)
       monitor = Fireap::Monitor.new(options, @ctx)
       return monitor.oneshot(options) if options['one-shot']
       monitor.monitor(options)
@@ -54,6 +56,7 @@ module Fireap
         opt = {
           config_path:  options['config'],
           dry_run:      options['dry-run'],
+          suppress_log: options['suppress-log'],
           develop_mode: options['debug'],
         }
         Fireap::Context.new(opt)
