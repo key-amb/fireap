@@ -1,6 +1,7 @@
 require 'diplomat'
 require 'singleton'
 
+require 'fireap/model/member'
 require 'fireap/model/node'
 
 module Fireap::Manager
@@ -8,11 +9,16 @@ module Fireap::Manager
     include Singleton
     attr :nodes
 
-    def initialize
+    def initialize(ctx: nil)
       @nodes ||= {}
+      members = Fireap::Model::Member.select(status: :alive, as: :hash)
       Diplomat::Node.get_all.each do |nod|
-        dnode  = Fireap::Model::Node.new(nod['Node'], nod['Address'])
-        @nodes[dnode.name] = dnode
+        dnode = Fireap::Model::Node.new(nod['Node'], nod['Address'])
+        if members[dnode.name] # Alive member found
+          @nodes[dnode.name] = dnode
+        elsif(ctx)
+          ctx.log.info "Node #{dnode.name} is found in catalog. But it's not alive. Skip."
+        end
       end
     end
 
