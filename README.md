@@ -12,7 +12,7 @@ And tasks will be executed in propagative way.
 Task propagation time takes _O(log N)_ in theory; as _N_ means node number in
 cluster.
 
-So this tool can shorten task which takes _O(N)_ time in systemof large number
+So this tool can shorten the time of tasks which take _O(N)_ time in system of large number
 of nodes.  
 Typical usecase is software deployment.
 
