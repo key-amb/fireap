@@ -10,26 +10,26 @@ module Fireap
   class CLI < Thor
     @ctx
     package_name "Fireap::CLI"
-    class_option 'config',  :aliases => 'c'
-    class_option 'debug',   :aliases => 'd'
+    class_option 'config', :type => :string,  :aliases => 'c'
+    class_option 'debug',  :type => :boolean, :aliases => 'd'
 
     desc 'fire', 'Fire an update Event for target Application'
-    option 'app', :required => true, :aliases => 'a'
-    option 'version', :aliases => 'v'
+    option 'app', :type => :string, :required => true, :aliases => 'a'
+    option 'version', :type => :string, :aliases => 'v'
     def fire
       load_context(options)
       Fireap::Controller::Fire.new(options, @ctx).fire(options)
     end
 
     desc 'reap', 'Watch and Reap a fired event'
-    option 'dry-run', :aliases => 'n'
+    option 'dry-run', :type => :boolean, :aliases => 'n'
     def reap
       load_context(options)
       Fireap::Controller::Reap.new(options, @ctx).reap
     end
 
     desc 'clear', 'Clear Fire Lock for target Application'
-    option 'app', :required => true, :aliases => 'a'
+    option 'app', :type => :string, :required => true, :aliases => 'a'
     def clear
       load_context(options)
       Fireap::Controller::Fire.new(options, @ctx).release_lock
@@ -37,9 +37,9 @@ module Fireap
     end
 
     desc 'monitor', 'Monitor update propagation of target Application'
-    option 'app', :required => true, :aliases => 'a'
-    option 'interval', :aliases => 'i'
-    option 'one-shot', :aliases => 'o'
+    option 'app', :type => :string, :required => true, :aliases => 'a'
+    option 'interval', :type => :numeric, :aliases => 'i'
+    option 'one-shot', :type => :boolean, :aliases => 'o'
     def monitor
       load_context(options)
       monitor = Fireap::Monitor.new(options, @ctx)
