@@ -26,7 +26,10 @@ module Fireap::Manager
         propkey  = $2
         ctx.log.debug 'Got kv. %s:%s => %s'%[nodename, propkey, data.value]
 
-        node = @nodes[nodename] or ctx.die("Unknown Node! #{nodename}")
+        unless node = @nodes[nodename]
+          ctx.log.warn "Node '#{nodename}' is not in cluster now. Possively the data is out-of-date."
+          next
+        end
         app  = node.apps[app.name] ||= Fireap::Model::Application.new(app.name, node: node)
         app.set_kv_prop(propkey, data)
       end
@@ -35,7 +38,6 @@ module Fireap::Manager
           node.apps[app.name] ||= Fireap::Model::Application.new(app.name, node: node)
         end
       end
-      ctx.log.debug @nodes.to_s
     end
 
     # @param app [Fireap::Model::Application]
