@@ -9,9 +9,10 @@ module Fireap
     # @param rotate [Fixnum, String] shift_age param in Logger.new
     # @param level Log level defined as constants in Logger class
     # @param header [String] Custom header for each log line
-    def initialize(outs, rotate: 0, level: 'INFO', header: '')
+    def initialize(outs, rotate: 0, level: nil, header: '')
       @loggers = []
       @header  = header.length > 0 ? header : nil
+      level  ||= 'INFO'
       outs.each do |out|
         logger           = ::Logger.new(out, rotate)
         logger.level     = Object.const_get("Logger::#{level}")
