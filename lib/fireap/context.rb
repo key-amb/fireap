@@ -27,8 +27,7 @@ module Fireap
       @log       = logger(@config.log, params[:suppress_log])
     end
 
-    def die(message, level=Logger::ERROR, err=Fireap::Error)
-      p message
+    def die(message, level=::Logger::ERROR, err=Fireap::Error)
       @log.log(level, [message, 'at', caller(1).to_s].join(%q{ }))
       raise err, message unless self.develop_mode?
     end
@@ -42,10 +41,8 @@ module Fireap
     end
 
     def develop_mode?
-      if    @mode == 'develop' \
-        and flg = @config.enable_debugging \
-        and flg != 0 and flg.length > 0
-        @log.warn 'IN DEVELOP MODE. Called from ' + caller(1..2).to_s
+      if is_develop_mode?
+        @log.warn 'IN DEVELOP MODE. Called from ' + caller(1..2).to_s if @log
         true
       else
         false
@@ -60,7 +57,18 @@ module Fireap
         outs.push(STDOUT) if STDOUT.tty?
         outs.push(config['file']) if config['file']
       end
-      Fireap::Logger.new(outs, rotate: config['rotate'], level: config['level'])
+      headers = []
+      headers.push('## DEVELOP MODE ##') if is_develop_mode?
+      headers.push('[Dry-run]')          if dry_run?
+      Fireap::Logger.new(
+        outs, rotate: config['rotate'], level: config['level'], header: headers.join(%q[ ])
+      )
+    end
+
+    def is_develop_mode?
+          @mode == 'develop' \
+      and flg = @config.enable_debugging \
+      and flg != 0 and flg.length > 0
     end
   end
 end
