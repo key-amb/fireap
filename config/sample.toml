@@ -10,7 +10,7 @@ rotate = "daily" # from Ruby Logger shift_age
 ## Common Task Settings
 # Can be overridden by each app settings
 [task]
-max_semaphores  = 5
+max_semaphores  = 5   # Max concurrency when one node can be "pulled" by others
 wait_after_fire = 15  # seconds. Don't wait if not defined
 watch_timeout   = 120 # seconds
 on_command_failure = "abort" # or "ignore". Default is "abort"
@@ -47,7 +47,9 @@ exec_commands = [
 
 [task.apps.bar]
 on_command_failure = "ignore"
+before_commands = []
 exec_commands = [
     "date '+%FT%T' > /tmp/bar.updated_at.txt",
     "rsync -az --delete --exclude='.git*' <%= @remote.address %>:<%= ENV['HOME'] %>/<%= @app %> <%= ENV['HOME'] %>/",
 ]
+after_commands = []
