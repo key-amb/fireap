@@ -108,14 +108,11 @@ EOS
 
         ntbl = Fireap::Manager::Node.instance
         ntbl.collect_app_info(@app, ctx: @ctx)
-        updated = ntbl.select_updated(@app, @version, ctx: @ctx).select do |key, val|
-          nodes.find_index do |nd|
-            nd.address == val.address
-          end
-        end
-        @ctx.log.info '%d/%d nodes updated.' % [updated.size, node_num]
+        updated = ntbl.select_updated(@app, @version, ctx: @ctx)
+        updated_num = compare_nodes_and_updated(nodes, updated)
+        @ctx.log.info '%d/%d nodes updated.' % [updated_num, node_num]
 
-        if updated.size == node_num
+        if updated_num == node_num
           @ctx.log.info 'Complete!'
           finished = true
           break
@@ -131,6 +128,20 @@ EOS
           @appconf.service_filter, tag_filter: @appconf.tag_filter)
       else
         Fireap::Manager::Node.instance.nodes
+      end
+    end
+
+    # @return [Fixnum] Updated node number
+    def compare_nodes_and_updated(nodes, updated)
+      if nodes.class == Hash and nodes.size >= updated.size
+        updated.size
+      else # nodes is from NodeFactory
+        match = updated.select do |key, val|
+          nodes.find_index do |nd|
+            nd.address == val.address
+          end
+        end
+        match.size
       end
     end
   end
