@@ -108,10 +108,14 @@ EOS
 
         ntbl = Fireap::Manager::Node.instance
         ntbl.collect_app_info(@app, ctx: @ctx)
-        updated = ntbl.select_updated(@app, @version, ctx: @ctx).size
-        @ctx.log.info '%d/%d nodes updated.' % [updated, node_num]
+        updated = ntbl.select_updated(@app, @version, ctx: @ctx).select do |key, val|
+          nodes.find_index do |nd|
+            nd.address == val.address
+          end
+        end
+        @ctx.log.info '%d/%d nodes updated.' % [updated.size, node_num]
 
-        if updated >= node_num
+        if updated.size == node_num
           @ctx.log.info 'Complete!'
           finished = true
           break
