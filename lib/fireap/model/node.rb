@@ -12,6 +12,14 @@ module Fireap::Model
       @apps    = {}
     end
 
+    def self.spawn(stash)
+      me = new( stash.delete('name'), stash.delete('address') )
+      stash.each do |key, val|
+        me.instance_variable_set("@#{key}", val)
+      end
+      me
+    end
+
     def self.query_agent_self
       resp = Fireap::DataAccess::Rest.get('/agent/self')
       new(resp['Member']['Name'], resp['Member']['Address'])
