@@ -27,8 +27,7 @@ module Fireap
       @log       = logger(@config.log, params[:suppress_log])
     end
 
-    def die(message, level=Logger::ERROR, err=Fireap::Error)
-      p message
+    def die(message, level=::Logger::ERROR, err=Fireap::Error)
       @log.log(level, [message, 'at', caller(1).to_s].join(%q{ }))
       raise err, message unless self.develop_mode?
     end
