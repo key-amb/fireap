@@ -70,8 +70,14 @@ max_semaphores     = 3
 on_command_failure = "ignore"
 exec_commands   = [ "foo exec1", "foo exec2" ]
 after_commands  = [ "foo after" ]
+service = "foo"
+service_regexp = "^fooo*$"
+tag = "v1"
+tag_regexp = "^v.$"
 
 [task.apps.bar]
+service_regexp = "^[bB]ar$"
+tag_regexp = "^(master|slave)$"
 EOS
 
     describe 'Not configured App' do
@@ -105,6 +111,13 @@ EOS
       it 'commands are partially overridden' do
         expect(appc.commands).to match_array(commands)
       end
+
+      it 'service_regexp is ignored because service is specified' do
+        expect(appc.service_filter).to eq '^foo$'
+      end
+      it 'tag_regexp is ignored because tag is specified' do
+        expect(appc.tag_filter).to eq '^v1$'
+      end
     end
 
     describe 'App = "bar"' do
@@ -131,6 +144,13 @@ EOS
 
       it 'commands all come from common setting' do
         expect(appc.commands).to match_array(commands)
+      end
+
+      it 'service_regexp is taken as filter because service is omitted' do
+        expect(appc.service_filter).to eq '^[bB]ar$'
+      end
+      it 'tag_regexp is taken as filter because tag is omitted' do
+        expect(appc.tag_filter).to eq '^(master|slave)$'
       end
     end
 
