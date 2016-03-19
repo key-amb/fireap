@@ -1,5 +1,5 @@
 module Fireap
-  VERSION    = '0.1.2'
+  VERSION    = '0.1.3'
   NAME       = 'fireap'
   EVENT_NAME = 'FIREAP:TASK'
 
