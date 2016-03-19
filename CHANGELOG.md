@@ -1,3 +1,10 @@
+## 0.2.0 (2016/3/20)
+
+Feature:
+
+- Introduce `service`, `service_regexp` param accompanied with `tag` and
+`tag_regexp` in configuration to filter task propagation targets.
+
 ## 0.1.3 (2016/3/19)
 
 Bug Fix:
