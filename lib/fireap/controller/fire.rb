@@ -111,7 +111,7 @@ EOS
         updated = ntbl.select_updated(@app, @version, ctx: @ctx).size
         @ctx.log.info '%d/%d nodes updated.' % [updated, node_num]
 
-        if updated == node_num
+        if updated >= node_num
           @ctx.log.info 'Complete!'
           finished = true
           break

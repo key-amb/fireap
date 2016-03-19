@@ -13,8 +13,12 @@ module Fireap::Data
 
     def to_model
       stash = {}
-      @me.each do |key, val|
-        stash[key.to_snakecase] = val
+      @me.each_pair do |key, val|
+        if key == 'Node'
+          stash['name'] = val
+        else
+          stash[key.to_s.to_snakecase] = val
+        end
       end
       Fireap::Model::Node.spawn(stash)
     end
