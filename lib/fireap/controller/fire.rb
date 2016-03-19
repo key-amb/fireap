@@ -21,8 +21,13 @@ module Fireap::Controller
       payload = prepare_event(options)
       return unless payload
 
-      Fireap::Model::Event.new(payload: payload).fire
-      @ctx.log.info "Event Fired! Data = #{payload.to_s}"
+      params = {
+        payload:        payload,
+        service_filter: @appconf.service_filter,
+        tag_filter:     @appconf.tag_filter,
+      }
+      Fireap::Model::Event.new(params).fire
+      @ctx.log.info "Event Fired! Params = #{params.inspect}"
 
       if @appconf.wait_after_fire.to_i > 0
         unless wait_propagation

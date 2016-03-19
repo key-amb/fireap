@@ -36,7 +36,18 @@ module Fireap::Model
     end
 
     def fire
-      Diplomat::Event.fire(self.name, self.payload.to_json)
+      filters = filter_to_fire()
+      Diplomat::Event.fire(self.name, self.payload.to_json, *filters)
+    end
+
+    private
+
+    def filter_to_fire
+      if @node_filter
+        [nil, @node_filter, nil]
+      else
+        [@service_filter, nil, @tag_filter]
+      end
     end
   end
 end
