@@ -41,9 +41,15 @@ exec_commands = [
     "scp -rp <%= @remote.address %>:<%= ENV['HOME'] %>/<%= @app %> <%= ENV['HOME'] %>/"
 ]
 
-# Belows are not implemented yet:
-# service = "foo"
-# tag = "bar"
+# You can specify Consul service and tag to filter the task propagation targets.
+# It can be normal string or regexp; if you want to specify regexp, use the keys
+# "service_regexp" or "tag_regexp".
+# If you miss "service" or "service_regexp" filter, "tag" and "tag_regexp" won't
+# be evaluated.
+service = "foo"
+tag     = "v1"
+# service_regexp = "^foo(:[a-z]+)?$"
+# tag_regexp = "^v[0-9]$"
 
 [task.apps.bar]
 on_command_failure = "ignore"
