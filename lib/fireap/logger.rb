@@ -20,7 +20,7 @@ module Fireap
       end
     end
 
-    def log(message, level=::Logger::INFO)
+    def log(level=::Logger::INFO, message)
       @loggers.each do |logger|
         logger.log(level, message, $0)
       end
