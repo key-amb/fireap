@@ -1,6 +1,8 @@
 require 'socket'
 
 require 'fireap'
+require 'fireap/manager/node'
+require 'fireap/manager/node_factory'
 require 'fireap/model/application'
 require 'fireap/model/event'
 require 'fireap/data_access/kv'
@@ -90,9 +92,9 @@ EOS
     def wait_propagation
       wait_s = @appconf.wait_after_fire
       time_s = Time.now.to_i
-      @app = Fireap::Model::Application.new(@appname)
-      ntbl = Fireap::Manager::Node.instance
-      node_num = ntbl.nodes.size
+      @app   = Fireap::Model::Application.new(@appname)
+      nodes  = target_nodes()
+      node_num = nodes.size
       interval = (@@wait_interval > wait_s) ? sec : @@wait_interval
 
       interrupt = 0
@@ -104,6 +106,7 @@ EOS
         @ctx.log.info "Waiting for propagation ... trial: #{try}"
         sleep interval
 
+        ntbl = Fireap::Manager::Node.instance
         ntbl.collect_app_info(@app, ctx: @ctx)
         updated = ntbl.select_updated(@app, @version, ctx: @ctx).size
         @ctx.log.info '%d/%d nodes updated.' % [updated, node_num]
@@ -116,6 +119,15 @@ EOS
         break if (Time.now.to_i - time_s) >= wait_s
       end
       finished
+    end
+
+    def target_nodes
+      if @appconf.service_filter
+        Fireap::Manager::NodeFactory.catalog_service_by_filter(
+          @appconf.service_filter, tag_filter: @appconf.tag_filter)
+      else
+        Fireap::Manager::Node.instance.nodes
+      end
     end
   end
 end
