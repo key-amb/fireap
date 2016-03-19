@@ -38,6 +38,10 @@ module Fireap
             conf['commands'].concat(cmds)
           end
         end
+        %w[service tag].each do |key|
+          conf["#{key}_filter"] \
+            = make_regexp_filter(conf.delete(key), conf.delete("#{key}_regexp"))
+        end
         App.new(conf)
       }.call
     end
@@ -50,8 +54,13 @@ module Fireap
       end
     end
 
+    def make_regexp_filter(name, regexp)
+      name ? "^#{name}$" : regexp
+    end
+
     class App
-      attr :max_semaphores, :wait_after_fire, :watch_timeout, :on_command_failure, :commands
+      attr :max_semaphores, :wait_after_fire, :watch_timeout
+      attr :on_command_failure, :commands, :service_filter, :tag_filter
 
       def initialize(stash)
         stash.each_pair do |k,v|

@@ -5,7 +5,6 @@ require 'fireap/util/string'
 
 module Fireap::Data
   class Kv
-    @me = nil
     def initialize(kv)
       @me = kv
     end

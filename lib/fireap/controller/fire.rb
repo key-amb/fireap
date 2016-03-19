@@ -1,6 +1,8 @@
 require 'socket'
 
 require 'fireap'
+require 'fireap/manager/node'
+require 'fireap/manager/node_factory'
 require 'fireap/model/application'
 require 'fireap/model/event'
 require 'fireap/data_access/kv'
@@ -21,8 +23,13 @@ module Fireap::Controller
       payload = prepare_event(options)
       return unless payload
 
-      Fireap::Model::Event.new(payload: payload).fire
-      @ctx.log.info "Event Fired! Data = #{payload.to_s}"
+      params = {
+        payload:        payload,
+        service_filter: @appconf.service_filter,
+        tag_filter:     @appconf.tag_filter,
+      }
+      Fireap::Model::Event.new(params).fire
+      @ctx.log.info "Event Fired! Params = #{params.inspect}"
 
       if @appconf.wait_after_fire.to_i > 0
         unless wait_propagation
@@ -85,9 +92,9 @@ EOS
     def wait_propagation
       wait_s = @appconf.wait_after_fire
       time_s = Time.now.to_i
-      @app = Fireap::Model::Application.new(@appname)
-      ntbl = Fireap::Manager::Node.instance
-      node_num = ntbl.nodes.size
+      @app   = Fireap::Model::Application.new(@appname)
+      nodes  = target_nodes()
+      node_num = nodes.size
       interval = (@@wait_interval > wait_s) ? sec : @@wait_interval
 
       interrupt = 0
@@ -99,11 +106,13 @@ EOS
         @ctx.log.info "Waiting for propagation ... trial: #{try}"
         sleep interval
 
+        ntbl = Fireap::Manager::Node.instance
         ntbl.collect_app_info(@app, ctx: @ctx)
-        updated = ntbl.select_updated(@app, @version, ctx: @ctx).size
-        @ctx.log.info '%d/%d nodes updated.' % [updated, node_num]
+        updated = ntbl.select_updated(@app, @version, ctx: @ctx)
+        updated_num = compare_nodes_and_updated(nodes, updated)
+        @ctx.log.info '%d/%d nodes updated.' % [updated_num, node_num]
 
-        if updated == node_num
+        if updated_num == node_num
           @ctx.log.info 'Complete!'
           finished = true
           break
@@ -111,6 +120,29 @@ EOS
         break if (Time.now.to_i - time_s) >= wait_s
       end
       finished
+    end
+
+    def target_nodes
+      if @appconf.service_filter
+        Fireap::Manager::NodeFactory.catalog_service_by_filter(
+          @appconf.service_filter, tag_filter: @appconf.tag_filter)
+      else
+        Fireap::Manager::Node.instance.nodes
+      end
+    end
+
+    # @return [Fixnum] Updated node number
+    def compare_nodes_and_updated(nodes, updated)
+      if nodes.class == Hash and nodes.size >= updated.size
+        updated.size
+      else # nodes is from NodeFactory
+        match = updated.select do |key, val|
+          nodes.find_index do |nd|
+            nd.address == val.address
+          end
+        end
+        match.size
+      end
     end
   end
 end
