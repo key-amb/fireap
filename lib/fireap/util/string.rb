@@ -5,7 +5,7 @@ class String
     if /^([A-Z]+)/.match(str)
       str = $&.downcase + $'
     end
-    while /[A-Z]/.match(str)
+    while /[A-Z]+/.match(str)
       str = [$`, '_', $&.downcase, $'].join
     end
     str
