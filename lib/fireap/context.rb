@@ -42,10 +42,8 @@ module Fireap
     end
 
     def develop_mode?
-      if    @mode == 'develop' \
-        and flg = @config.enable_debugging \
-        and flg != 0 and flg.length > 0
-        @log.warn 'IN DEVELOP MODE. Called from ' + caller(1..2).to_s
+      if is_develop_mode?
+        @log.warn 'IN DEVELOP MODE. Called from ' + caller(1..2).to_s if @log
         true
       else
         false
@@ -60,7 +58,18 @@ module Fireap
         outs.push(STDOUT) if STDOUT.tty?
         outs.push(config['file']) if config['file']
       end
-      Fireap::Logger.new(outs, rotate: config['rotate'], level: config['level'])
+      headers = []
+      headers.push('## DEVELOP MODE ##') if is_develop_mode?
+      headers.push('[Dry-run]')          if dry_run?
+      Fireap::Logger.new(
+        outs, rotate: config['rotate'], level: config['level'], header: headers.join(%q[ ])
+      )
+    end
+
+    def is_develop_mode?
+          @mode == 'develop' \
+      and flg = @config.enable_debugging \
+      and flg != 0 and flg.length > 0
     end
   end
 end
