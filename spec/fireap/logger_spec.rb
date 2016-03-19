@@ -24,7 +24,7 @@ describe 'Fireap::Logger' do
         tester.logger.log(Logger::ERROR, message)
 
         tester.outs.each_with_index do |out, idx|
-          expected = /\[ERROR\] #{header} #{message}/
+          expected = /\[ERROR\] #{header} #{message} at /
           it "out[#{idx}] matches #{expected}" do
             expect(out.string).to match expected
           end
@@ -60,7 +60,7 @@ describe 'Fireap::Logger' do
         tester.logger.debug(message)
 
         tester.outs.each_with_index do |out, idx|
-          expected = /\[DEBUG\] #{header} #{message}/
+          expected = /\[DEBUG\] #{header} #{message} at /
           it "out[#{idx}] matches #{expected}" do
             expect(out.string).to match expected
           end

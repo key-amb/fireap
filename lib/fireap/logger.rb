@@ -13,8 +13,9 @@ module Fireap
       @loggers = []
       @header  = header.length > 0 ? header : nil
       outs.each do |out|
-        logger = ::Logger.new(out, rotate)
-        logger.level = Object.const_get("Logger::#{level}")
+        logger           = ::Logger.new(out, rotate)
+        logger.level     = Object.const_get("Logger::#{level}")
+        logger.progname  = [$0, ARGV].join(%q[ ])
         logger.formatter = proc do |level, date, prog, msg|
           "#{date} [#{level}] #{msg} -- #{prog}\n"
         end
@@ -24,7 +25,7 @@ module Fireap
 
     def log(level=::Logger::INFO, message)
       @loggers.each do |logger|
-        logger.log(level, custom_message(message), $0)
+        logger.log(level, custom_message(message))
       end
     end
 
@@ -41,7 +42,8 @@ module Fireap
     private
 
     def custom_message(message)
-      @header ? "#{@header} #{message}" : message
+      customized = [message, 'at', caller(4, 1).to_s].join(%q[ ])
+      @header ? "#{@header} #{customized}" : customized
     end
   end
 end
