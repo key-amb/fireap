@@ -6,7 +6,6 @@ require 'fireap/util/string'
 
 module Fireap::Data
   class Event
-    @me = nil
     def initialize(stash)
       @me = stash
     end
