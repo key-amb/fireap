@@ -16,6 +16,7 @@ module Fireap::Controller
     @@restore_interval = 3
     @@restore_retry    = 3
 
+    # @param ctx [Fireap::Context]
     def initialize(options, ctx)
       @ctx     = ctx
       @config  = ctx.config

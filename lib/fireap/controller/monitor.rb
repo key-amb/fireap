@@ -4,6 +4,7 @@ require 'fireap/view_model/application'
 module Fireap
   class Monitor
 
+    # @param ctx [Fireap::Context]
     def initialize(options, ctx)
       @appname  = options['app']
       @appdata  = Fireap::ViewModel::Application.new(options['app'], ctx)
