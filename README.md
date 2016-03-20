@@ -68,38 +68,38 @@ The image below illustrates task propagation procedure by **fireap** in Consul c
 
 ![Fireap Task Propagation Illustration](https://raw.githubusercontent.com/key-amb/fireap/resource/image/fireap-propagation.png)
 
-### Leader and Followers
+### Publisher and Subscribers
 
-One _leader_ node fires Consul events whose `Name` is `FIREAP:TASK`.
+One _publisher_ node fires Consul events whose `Name` is `FIREAP:TASK`.
 And it is assumed to be the 1st node in the cluster which finishes the task.  
-All other nodes are _followers_ who receive events and execute tasks.
+All other nodes are _subscribers_ who receive events and execute tasks.
 
-Concept of _leader_ and _follower_ is not related to role of _server_ and _client_
+Concept of _publisher_ and _subscriber_ is not related to role of _server_ and _client_
 in Consul.  
-_Server_ or _client_ in Consul cluster can be either _leader_ or _follower_.
+_Server_ or _client_ in Consul cluster can be either _publisher_ or _subscriber_.
 
 ### Procedure
 
-1. _Leader_ fires a Consul event.
-2. The event is broadcasted for _followers_ at once.
-3. _Followers_ execute the task in propagative way:
-  1. All _followers_ search for a finished node in the cluster to "pull" update
+1. _Publisher_ fires a Consul event.
+2. The event is broadcasted for appropriate _subscribers_ at once.
+3. _Subscribers_ execute the task in propagative way:
+  1. All _subscribers_ search for a finished node in the cluster to "pull" update
      information or contents from the node.  
-     In first stage, there is only _leader_ who finished the task.
-     So they all tries to "pull" from _leader_, but maximum number of who can
+     In first stage, there is only _publisher_ who finished the task.
+     So they all tries to "pull" from _publisher_, but maximum number of who can
      "pull" from a particular node is limited by configuration.
-     Then, only several _followers_ succeed to "pull" and execute the task.
-  2. In second stage, _leader_ and several _followers_ now finished the task.
-     Their update will be "pulled" by other _followers_.
-  3. Stage goes on until all _followers_ finish the task.
+     Then, only several _subscribers_ succeed to "pull" and execute the task.
+  2. In second stage, _publisher_ and several _subscribers_ now finished the task.
+     Their update will be "pulled" by other _subscribers_.
+  3. Stage goes on until all _subscribers_ finish the task.
 
 This propagation way looks like tree branching.  
-But it is rather robust because even if a _follower_ happens to fail the task, the
+But it is rather robust because even if a _subscriber_ happens to fail the task, the
 failure does not affect others.
 
 ### Consul Kv
 
-_Leader_ and _followers_ store information in _Consul Kv_ about task completion and so on.  
+_Publisher_ and _subscribers_ store information in _Consul Kv_ about task completion and so on.  
 All keys of data related to this program begin with prefix `fireap/`.
 
 # How to get started?
