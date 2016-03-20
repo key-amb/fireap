@@ -1,14 +1,15 @@
 require 'socket'
 
 require 'fireap'
+require 'fireap/data_access/kv'
 require 'fireap/manager/node'
 require 'fireap/manager/node_factory'
 require 'fireap/model/application'
 require 'fireap/model/event'
-require 'fireap/data_access/kv'
 
 module Fireap::Controller
   class Fire
+
     @@default_semaphore = 2
     @@wait_interval     = 2
 
@@ -16,6 +17,7 @@ module Fireap::Controller
     def initialize(options, ctx)
       @appname = options['app']
       @version = options['version'] || nil
+      @node_filter = options['node-name']
       @ctx     = ctx
       @appconf = ctx.config.app_config(@appname)
     end
@@ -26,6 +28,7 @@ module Fireap::Controller
 
       params = {
         payload:        payload,
+        node_filter:    @node_filter ? "^#{@node_filter}$" : nil,
         service_filter: @appconf.service_filter,
         tag_filter:     @appconf.tag_filter,
       }
@@ -124,7 +127,9 @@ EOS
     end
 
     def target_nodes
-      if @appconf.service_filter
+      if @node_filter
+        [ Fireap::Model::Node.find(@node_filter) ]
+      elsif @appconf.service_filter
         Fireap::Manager::NodeFactory.catalog_service_by_filter(
           @appconf.service_filter, tag_filter: @appconf.tag_filter)
       else
