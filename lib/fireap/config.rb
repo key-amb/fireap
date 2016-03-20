@@ -2,6 +2,7 @@ require 'diplomat'
 require 'toml'
 
 require 'fireap/validator'
+require 'fireap/view_model/config'
 
 module Fireap
   class Config
@@ -117,6 +118,15 @@ EOS
 
       def is_failure_ignored?
         /^ignore$/i.match(@on_command_failure)
+      end
+
+      def to_view
+        stash = {}
+        @@accessors.each do |acc|
+          stash[acc.to_s] = instance_variable_get("@#{acc}")
+        end
+        stash['is_failure_ignored'] = self.is_failure_ignored?
+        Fireap::ViewModel::Config::App.new(stash)
       end
     end
   end
