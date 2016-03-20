@@ -11,12 +11,54 @@ class Fireap::Config
   end
 end
 
-describe 'Fireap::Config' do
-  describe 'Basic feature' do
+describe 'Fireap::Config#validate' do
+  context 'with wrong key' do
+    tester = TestConfig.new(<<"EOS")
+uri = "http://localhost:8500"
+enable_debug = "true"
+#{TestConfig.minimum_body}
+max_semaphore = 5
+EOS
+    it 'raise Fireap::Config::Error' do
+      expect { tester.config.validate }.to raise_error(
+        Fireap::Config::Error,
+        /\["uri", "enable_debug", "task.max_semaphore"\] extra/
+      )
+    end
+  end
+  context 'type miss match' do
+    ['url = 5', "[log]\nlevel = {}"].each do |text|
+      context "given #{text}" do
+        tester = TestConfig.new(<<"EOS")
+#{text}
+#{TestConfig.minimum_body}
+EOS
+        it 'raise Fireap::Config::Error' do
+          expect { tester.config.validate }.to \
+            raise_error(Fireap::Config::Error, /type mismatch/)
+        end
+      end
+    end
+  end
+end
+
+describe 'Fireap::Config features' do
+  context 'with minimum config' do
+    tester = TestConfig.minimum
+    it 'is valid config' do
+      expect(tester.config.validate).to be true
+    end
+  end
+
+  context 'with global configured params' do
     tester = TestConfig.basic
 
     it 'match with TOML' do
       expect(tester.config.test_me).to match tester.parsed
+    end
+
+    it 'is valid config' do
+      expect(tester.config.validate).to be true
     end
 
     describe 'Top level keys are readable accessors' do
@@ -34,8 +76,12 @@ describe 'Fireap::Config' do
     end
   end
 
-  describe 'App Task Settings' do
+  context 'with some app task settings' do
     tester = TestConfig.tasks
+
+    it 'is valid config' do
+      expect(tester.config.validate).to be true
+    end
 
     describe 'Not configured App' do
       it 'return nil' do
@@ -110,8 +156,6 @@ describe 'Fireap::Config' do
         expect(appc.tag_filter).to eq '^(master|slave)$'
       end
     end
-
   end
-
 end
 
