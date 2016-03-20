@@ -17,6 +17,17 @@ class TestConfig
     @config = Fireap::Config.new
   end
 
+  def self.minimum_body
+    <<"EOS"
+[task]
+apps = {}
+EOS
+  end
+
+  def self.minimum
+    new(minimum_body())
+  end
+
   def self.basic
     new(<<"EOS")
 url = "http://localhost:8500"
@@ -25,6 +36,8 @@ enable_debugging = ""
 [log]
 level = "INFO"
 file  = "tmp/fireap.log"
+
+#{minimum_body()}
 EOS
   end
 
