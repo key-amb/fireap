@@ -67,6 +67,15 @@ EOS
       true
     end
 
+    def app_list
+      list = []
+      self.task['apps'].each_key do |name|
+        appc = app_config(name)
+        list << app_config(name)
+      end
+      list
+    end
+
     def app_config(appname)
       @appc[appname] ||= proc {
         unless appc = self.task['apps'][appname]
