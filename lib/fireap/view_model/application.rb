@@ -1,4 +1,4 @@
-require 'text-table'
+require 'terminal-table'
 
 require 'fireap/view_model/application_node'
 
@@ -39,11 +39,11 @@ EOH
     end
 
     def body_text
-      tt = Text::Table.new
-      tt.head = %w[ Name Version Sem Date From ]
+      tt = Terminal::Table.new
+      tt.headings = %w[ Name Version Sem Date From ]
 
       @appnodes.sort.each do |an|
-        tt.rows << [
+        tt.add_row [
           an.nodename,
           an.version,
           an.semaphore,
