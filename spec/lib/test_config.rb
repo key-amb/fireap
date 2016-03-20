@@ -30,8 +30,6 @@ EOS
 
   def self.tasks
     new(<<"EOS")
-[log]
-
 ## Common Task Settings
 [task]
 max_semaphores     = 5
