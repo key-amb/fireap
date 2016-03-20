@@ -1,3 +1,6 @@
+require 'diplomat'
+
+require 'fireap'
 require 'fireap/model/node'
 require 'fireap/util/string'
 
@@ -5,6 +8,11 @@ module Fireap::Data
   class Node
     def initialize(stash)
       @me = stash
+    end
+
+    def self.find(name)
+      raw = Diplomat::Node.get(name)
+      new(raw['Node'])
     end
 
     def get_val(key)

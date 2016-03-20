@@ -1,6 +1,7 @@
+require 'fireap/data/node'
+require 'fireap/data_access/rest'
 require 'fireap/manager/node'
 require 'fireap/model/application'
-require 'fireap/data_access/rest'
 
 module Fireap::Model
   class Node
@@ -10,6 +11,11 @@ module Fireap::Model
       @name    = name
       @address = address
       @apps    = {}
+    end
+
+    def self.find(name)
+      data = Fireap::Data::Node.find(name)
+      data.to_model
     end
 
     def self.spawn(stash)
