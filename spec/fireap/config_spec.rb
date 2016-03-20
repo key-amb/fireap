@@ -1,5 +1,7 @@
 require 'fireap/config'
 
+require 'lib/test_config'
+
 require 'tempfile'
 require 'toml'
 
@@ -9,30 +11,9 @@ class Fireap::Config
   end
 end
 
-class TestFireapConfig
-  attr :parsed, :config
-  def initialize(toml)
-    @parsed = TOML.parse(toml)
-    tmp = Tempfile.open('tmp') do |fp|
-      fp.puts toml
-      fp
-    end
-
-    ENV['FIREAP_CONFIG_PATH'] = tmp.path
-    @config = Fireap::Config.new
-  end
-end
-
 describe 'Fireap::Config' do
   describe 'Basic feature' do
-    tester = TestFireapConfig.new(<<"EOS")
-url = "http://localhost:8500"
-enable_debugging = ""
-
-[log]
-level = "INFO"
-file  = "tmp/fireap.log"
-EOS
+    tester = TestConfig.basic
 
     it 'match with TOML' do
       expect(tester.config.test_me).to match tester.parsed
@@ -54,31 +35,7 @@ EOS
   end
 
   describe 'App Task Settings' do
-    tester = TestFireapConfig.new(<<"EOS")
-## Common Task Settings
-[task]
-max_semaphores     = 5
-wait_after_fire    = 10
-watch_timeout      = 120
-on_command_failure = "abort"
-before_commands = [ "common before" ]
-exec_commands   = [ "common exec" ]
-after_commands  = [ "common after" ]
-
-[task.apps.foo]
-max_semaphores     = 3
-on_command_failure = "ignore"
-exec_commands   = [ "foo exec1", "foo exec2" ]
-after_commands  = [ "foo after" ]
-service = "foo"
-service_regexp = "^fooo*$"
-tag = "v1"
-tag_regexp = "^v.$"
-
-[task.apps.bar]
-service_regexp = "^[bB]ar$"
-tag_regexp = "^(master|slave)$"
-EOS
+    tester = TestConfig.tasks
 
     describe 'Not configured App' do
       it 'return nil' do
