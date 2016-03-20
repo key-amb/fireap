@@ -61,6 +61,9 @@ module Fireap
         }
         Fireap::Context.new(opt)
       }.call
+
+      @ctx.config.validate
+
       if ! @ctx.develop_mode? and options['debug']
         @ctx.log.warn %q[You specified DEBUG option. But DEBUG mode is disabled by configuration. Please set `enable_debugging = "ON"` in your config file.]
       end
