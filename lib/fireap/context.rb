@@ -52,6 +52,7 @@ module Fireap
     private
 
     def logger(config, suppress)
+      config ||= {}
       outs = []
       unless suppress
         outs.push(STDOUT) if STDOUT.tty?

@@ -1,5 +1,7 @@
 require 'fireap/config'
 
+require 'lib/test_config'
+
 require 'tempfile'
 require 'toml'
 
@@ -9,33 +11,54 @@ class Fireap::Config
   end
 end
 
-class TestFireapConfig
-  attr :parsed, :config
-  def initialize(toml)
-    @parsed = TOML.parse(toml)
-    tmp = Tempfile.open('tmp') do |fp|
-      fp.puts toml
-      fp
+describe 'Fireap::Config#validate' do
+  context 'with wrong key' do
+    tester = TestConfig.new(<<"EOS")
+uri = "http://localhost:8500"
+enable_debug = "true"
+#{TestConfig.minimum_body}
+max_semaphore = 5
+EOS
+    it 'raise Fireap::Config::Error' do
+      expect { tester.config.validate }.to raise_error(
+        Fireap::Config::Error,
+        /\["uri", "enable_debug", "task.max_semaphore"\] extra/
+      )
     end
-
-    ENV['FIREAP_CONFIG_PATH'] = tmp.path
-    @config = Fireap::Config.new
+  end
+  context 'type miss match' do
+    ['url = 5', "[log]\nlevel = {}"].each do |text|
+      context "given #{text}" do
+        tester = TestConfig.new(<<"EOS")
+#{text}
+#{TestConfig.minimum_body}
+EOS
+        it 'raise Fireap::Config::Error' do
+          expect { tester.config.validate }.to \
+            raise_error(Fireap::Config::Error, /type mismatch/)
+        end
+      end
+    end
   end
 end
 
-describe 'Fireap::Config' do
-  describe 'Basic feature' do
-    tester = TestFireapConfig.new(<<"EOS")
-url = "http://localhost:8500"
-enable_debugging = ""
+describe 'Fireap::Config features' do
+  context 'with minimum config' do
+    tester = TestConfig.minimum
+    it 'is valid config' do
+      expect(tester.config.validate).to be true
+    end
+  end
 
-[log]
-level = "INFO"
-file  = "tmp/fireap.log"
-EOS
+  context 'with global configured params' do
+    tester = TestConfig.basic
 
     it 'match with TOML' do
       expect(tester.config.test_me).to match tester.parsed
+    end
+
+    it 'is valid config' do
+      expect(tester.config.validate).to be true
     end
 
     describe 'Top level keys are readable accessors' do
@@ -53,32 +76,12 @@ EOS
     end
   end
 
-  describe 'App Task Settings' do
-    tester = TestFireapConfig.new(<<"EOS")
-## Common Task Settings
-[task]
-max_semaphores     = 5
-wait_after_fire    = 10
-watch_timeout      = 120
-on_command_failure = "abort"
-before_commands = [ "common before" ]
-exec_commands   = [ "common exec" ]
-after_commands  = [ "common after" ]
+  context 'with some app task settings' do
+    tester = TestConfig.tasks
 
-[task.apps.foo]
-max_semaphores     = 3
-on_command_failure = "ignore"
-exec_commands   = [ "foo exec1", "foo exec2" ]
-after_commands  = [ "foo after" ]
-service = "foo"
-service_regexp = "^fooo*$"
-tag = "v1"
-tag_regexp = "^v.$"
-
-[task.apps.bar]
-service_regexp = "^[bB]ar$"
-tag_regexp = "^(master|slave)$"
-EOS
+    it 'is valid config' do
+      expect(tester.config.validate).to be true
+    end
 
     describe 'Not configured App' do
       it 'return nil' do
@@ -153,8 +156,6 @@ EOS
         expect(appc.tag_filter).to eq '^(master|slave)$'
       end
     end
-
   end
-
 end
 
