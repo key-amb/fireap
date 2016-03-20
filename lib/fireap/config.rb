@@ -17,10 +17,7 @@ module Fireap
     end
 
     def method_missing(method)
-      unless @me.has_key?(method.to_s)
-        #raise "No such method: #{method}!"
-        nil
-      else
+      if @me.has_key?(method.to_s)
         @me[method.to_s]
       end
     end
