@@ -1,3 +1,10 @@
+## 0.4.0 (2016/3/20)
+
+Feature:
+
+- Add `--node-name|-n=<NODE>` option for `fire` subcommand to limit task
+propagation target.
+
 ## 0.3.0 (2016/3/20)
 
 Feature:
