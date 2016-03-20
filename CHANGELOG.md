@@ -1,3 +1,9 @@
+## 0.2.1 (2016/3/20)
+
+Improve:
+
+- Add config validation before every command execution.
+
 ## 0.2.0 (2016/3/20)
 
 Feature:
