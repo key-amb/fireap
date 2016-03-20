@@ -1,3 +1,9 @@
+## 0.3.0 (2016/3/20)
+
+Feature:
+
+- Add `task` subcommand to show task settings in configuration.
+
 ## 0.2.1 (2016/3/20)
 
 Improve:
