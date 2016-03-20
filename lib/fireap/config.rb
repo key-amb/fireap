@@ -83,7 +83,7 @@ EOS
           conf["#{key}_filter"] \
             = make_regexp_filter(conf.delete(key), conf.delete("#{key}_regexp"))
         end
-        App.new(conf)
+        App.new(appname, conf)
       }.call
     end
 
@@ -100,10 +100,16 @@ EOS
     end
 
     class App
-      attr :max_semaphores, :wait_after_fire, :watch_timeout
-      attr :on_command_failure, :commands, :service_filter, :tag_filter
+      @@accessors = [
+        :name, :max_semaphores, :wait_after_fire, :watch_timeout,
+        :on_command_failure, :commands, :service_filter, :tag_filter
+      ]
+      @@accessors.each do |acc|
+        attr acc
+      end
 
-      def initialize(stash)
+      def initialize(name, stash)
+        @name = name
         stash.each_pair do |k,v|
           instance_variable_set("@#{k}", v)
         end
