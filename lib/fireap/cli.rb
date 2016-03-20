@@ -17,6 +17,8 @@ module Fireap
     desc 'fire', 'Fire an update Event for target Application'
     option 'app', :type => :string, :required => true, :aliases => 'a'
     option 'version', :type => :string, :aliases => 'v'
+    option 'node-name', :type => :string, :aliases => 'n'
+    #option 'node-regexp', :type => :string, :aliases => 'nr'
     def fire
       load_context(options)
       Fireap::Controller::Fire.new(options, @ctx).fire(options)
