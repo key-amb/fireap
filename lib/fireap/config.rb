@@ -2,6 +2,7 @@ require 'diplomat'
 require 'toml'
 
 require 'fireap/validator'
+require 'fireap/view_model/config'
 
 module Fireap
   class Config
@@ -66,6 +67,15 @@ EOS
       true
     end
 
+    def app_list
+      list = []
+      self.task['apps'].each_key do |name|
+        appc = app_config(name)
+        list << app_config(name)
+      end
+      list
+    end
+
     def app_config(appname)
       @appc[appname] ||= proc {
         unless appc = self.task['apps'][appname]
@@ -83,7 +93,7 @@ EOS
           conf["#{key}_filter"] \
             = make_regexp_filter(conf.delete(key), conf.delete("#{key}_regexp"))
         end
-        App.new(conf)
+        App.new(appname, conf)
       }.call
     end
 
@@ -100,10 +110,16 @@ EOS
     end
 
     class App
-      attr :max_semaphores, :wait_after_fire, :watch_timeout
-      attr :on_command_failure, :commands, :service_filter, :tag_filter
+      @@accessors = [
+        :name, :max_semaphores, :wait_after_fire, :watch_timeout,
+        :on_command_failure, :commands, :service_filter, :tag_filter
+      ]
+      @@accessors.each do |acc|
+        attr acc
+      end
 
-      def initialize(stash)
+      def initialize(name, stash)
+        @name = name
         stash.each_pair do |k,v|
           instance_variable_set("@#{k}", v)
         end
@@ -111,6 +127,15 @@ EOS
 
       def is_failure_ignored?
         /^ignore$/i.match(@on_command_failure)
+      end
+
+      def to_view
+        stash = {}
+        @@accessors.each do |acc|
+          stash[acc.to_s] = instance_variable_get("@#{acc}")
+        end
+        stash['is_failure_ignored'] = self.is_failure_ignored?
+        Fireap::ViewModel::Config::App.new(stash)
       end
     end
   end

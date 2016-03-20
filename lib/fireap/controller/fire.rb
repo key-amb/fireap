@@ -12,6 +12,7 @@ module Fireap::Controller
     @@default_semaphore = 2
     @@wait_interval     = 2
 
+    # @param ctx [Fireap::Context]
     def initialize(options, ctx)
       @appname = options['app']
       @version = options['version'] || nil

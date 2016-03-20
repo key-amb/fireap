@@ -5,6 +5,7 @@ require 'fireap/context'
 require 'fireap/controller/fire'
 require 'fireap/controller/monitor'
 require 'fireap/controller/reap'
+require 'fireap/controller/task'
 
 module Fireap
   class CLI < Thor
@@ -47,6 +48,13 @@ module Fireap
       monitor = Fireap::Monitor.new(options, @ctx)
       return monitor.oneshot(options) if options['one-shot']
       monitor.monitor(options)
+    end
+
+    desc 'task', 'List configured tasks'
+    option 'width', :type => :numeric, :aliases => 'w'
+    def task
+      load_context(options)
+      Fireap::Controller::Task.new.show(options, @ctx)
     end
 
     private
