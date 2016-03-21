@@ -2,6 +2,19 @@
 
 Consul-based rapid propagative task runner for large systems.
 
+### Table of Contents
+
+* [Overview](#overview)
+  * [What's this?](#whats-this)
+  * [Benchmark](#benchmark)
+  * [About Consul](#about-consul)
+  * [Take a look at how it works](#take-a-look-at-how-it-works)
+  * [Task Propagation Procedure](#task-propagation-procedure)
+    * [Publisher and Subscribers](#publisher-and-subscribers)
+    * [Procedure](#procedure)
+    * [Consul Kv](#consul-kv)
+* [How to get started?](#how-to-get-started)
+
 # Overview
 
 ## What's this?
