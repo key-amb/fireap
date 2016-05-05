@@ -117,7 +117,7 @@ All keys of data related to this program begin with prefix `fireap/`.
 
 # How to get started?
 
-You can start **fireap** with the guide in [Documentation Wiki](https://github.com/key-amb/fireap/wiki).
+You can start **fireap** with the guide in [Documentation](http://key-amb.github.io/fireap-doc/).
 
 # LICENSE
 
