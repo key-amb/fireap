@@ -1,4 +1,4 @@
-# fireap [![Build Status](https://travis-ci.org/key-amb/fireap.svg?branch=master)](https://travis-ci.org/key-amb/fireap)
+# fireap [![Build Status](https://travis-ci.org/progrhyme/fireap.svg?branch=master)](https://travis-ci.org/progrhyme/fireap)
 
 Consul-based rapid propagative task runner for large systems.
 
@@ -61,7 +61,7 @@ automation developed and produced by [HashiCorp](https://www.hashicorp.com/).
 
 Below is a demo of **fireap** task propagation at a 10-node Consul cluster.
 
-![Fireap Demo](https://raw.githubusercontent.com/key-amb/fireap/resource/image/fireap-demo.gif)
+![Fireap Demo](https://raw.githubusercontent.com/progrhyme/fireap/resource/image/fireap-demo.gif)
 
 On the top of the screen, `fireap monitor` command is executed.
 This continuously shows the application version and updated information of nodes
@@ -79,7 +79,7 @@ Eventually, configured tasks are executed on nodes in the cluster.
 
 The image below illustrates task propagation procedure by **fireap** in Consul cluster.
 
-![Fireap Task Propagation Illustration](https://raw.githubusercontent.com/key-amb/fireap/resource/image/fireap-propagation.png)
+![Fireap Task Propagation Illustration](https://raw.githubusercontent.com/progrhyme/fireap/resource/image/fireap-propagation.png)
 
 ### Publisher and Subscribers
 
@@ -117,10 +117,10 @@ All keys of data related to this program begin with prefix `fireap/`.
 
 # How to get started?
 
-You can start **fireap** with the guide in [Documentation](http://key-amb.github.io/fireap-doc/).
+You can start **fireap** with the guide in [Documentation](http://progrhyme.github.io/fireap-doc/).
 
 # LICENSE
 
 The MIT License (MIT)
 
-Copyright (c) 2016 YASUTAKE Kiyoshi
+Copyright (c) 2016-2017 IKEDA Kiyoshi

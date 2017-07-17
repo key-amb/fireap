@@ -29,7 +29,7 @@ Feature:
 Bug Fix:
 
 - Add `::` before `Logger::` constant -
-https://github.com/key-amb/fireap/commit/d97c6f62019960701d07c61be379ded2908ecf6b
+https://github.com/progrhyme/fireap/commit/d97c6f62019960701d07c61be379ded2908ecf6b
   - In v0.1.2, when command fails in `reap` mode, program exits irregularly.
 
 Improve:
